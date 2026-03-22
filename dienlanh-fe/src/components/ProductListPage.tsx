@@ -1,0 +1,181 @@
+import { useState, useEffect } from 'react';
+import { FilterSidebar } from './FilterSidebar';
+import { ProductListCard } from './ProductListCard';
+import { Filter, Grid, List, ArrowLeft, Loader } from 'lucide-react';
+import { useProducts } from '../hooks/useProducts';
+import { Product } from '../types/product';
+
+interface ProductListPageProps {
+  onNavigate?: (page: 'home' | 'product-detail') => void;
+  onProductSelect?: (product: Product) => void;
+}
+
+export function ProductListPage({ onNavigate, onProductSelect }: ProductListPageProps) {
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  
+  const {
+    products,
+    loading,
+    total,
+    page,
+    totalPages,
+    filters,
+    updateFilters,
+    setPage,
+  } = useProducts();
+
+  const handleSortChange = (value: string) => {
+    switch (value) {
+      case 'price-asc':
+        updateFilters({ sortBy: 'price', sortOrder: 'asc' });
+        break;
+      case 'price-desc':
+        updateFilters({ sortBy: 'price', sortOrder: 'desc' });
+        break;
+      case 'name':
+        updateFilters({ sortBy: 'name', sortOrder: 'asc' });
+        break;
+      case 'newest':
+        updateFilters({ sortBy: 'createdAt', sortOrder: 'desc' });
+        break;
+      default:
+        updateFilters({ sortBy: 'views', sortOrder: 'desc' });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-secondary-50">
+      {/* Breadcrumb & Header */}
+      <div className="bg-white border-b border-secondary-200">
+        <div className="container mx-auto px-4 py-6">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-sm text-secondary-600 mb-4">
+            <button 
+              onClick={() => onNavigate?.('home')}
+              className="hover:text-primary-600 flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Trang chủ
+            </button>
+            <span>/</span>
+            <span className="text-secondary-900 font-medium">Sản phẩm</span>
+          </div>
+
+          {/* Page Title & Controls */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="mb-2">Tất cả sản phẩm</h1>
+              <p className="text-secondary-600">Tìm thấy {total} sản phẩm</p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {/* Sort */}
+              <select
+                onChange={(e) => handleSortChange(e.target.value)}
+                className="px-4 py-2 border-2 border-secondary-200 rounded-lg focus:border-primary-500 focus:outline-none bg-white"
+                defaultValue="popular"
+              >
+                <option value="popular">Phổ biến nhất</option>
+                <option value="newest">Mới nhất</option>
+                <option value="price-asc">Giá thấp đến cao</option>
+                <option value="price-desc">Giá cao đến thấp</option>
+                <option value="name">Tên A-Z</option>
+              </select>
+
+              {/* View Mode - Desktop only */}
+              <div className="hidden md:flex border-2 border-secondary-200 rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 ${
+                    viewMode === 'grid'
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-white text-secondary-600 hover:bg-secondary-50'
+                  }`}
+                >
+                  <Grid className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 ${
+                    viewMode === 'list'
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-white text-secondary-600 hover:bg-secondary-50'
+                  }`}
+                >
+                  <List className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Filter Button - Mobile only */}
+              <button
+                onClick={() => setFilterOpen(true)}
+                className="lg:hidden flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                <Filter className="w-4 h-4" />
+                Lọc
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex gap-6">
+          {/* Sidebar Filter - Desktop */}
+          <FilterSidebar 
+            filters={filters}
+            onFilterChange={updateFilters}
+          />
+
+          {/* Mobile Filter Drawer */}
+          <FilterSidebar
+            isOpen={filterOpen}
+            onClose={() => setFilterOpen(false)}
+            isMobile={true}
+            filters={filters}
+            onFilterChange={updateFilters}
+          />
+
+          {/* Product Grid */}
+          <div className="flex-1">
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <Loader className="w-8 h-8 animate-spin text-primary-600" />
+              </div>
+            ) : products.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-xl border border-secondary-200">
+                <p className="text-secondary-600">Không tìm thấy sản phẩm nào</p>
+              </div>
+            ) : (
+              <>
+                <div className={`grid ${
+                  viewMode === 'grid'
+                    ? 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3'
+                    : 'grid-cols-1'
+                } gap-6`}>
+                  {products.map(product => (
+                    <ProductListCard 
+                      key={product._id || product.id} 
+                      product={product}
+                      viewMode={viewMode}
+                      onViewDetail={() => onProductSelect?.(product)}
+                    />
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="mt-12 flex justify-center">
+                    {/* ... pagination JSX ... */}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
