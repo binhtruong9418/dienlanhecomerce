@@ -1,6 +1,6 @@
 // QuoteSection.tsx
 import { Send, Phone, Upload, X, FileText, Loader, CheckCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useState, React } from 'react';
 import quoteApi from '../api/quoteApi';
 
 export function QuoteSection() {
@@ -226,22 +226,6 @@ export function QuoteSection() {
                   />
                 </div>
 
-                {/* Email */}
-                <div>
-                  <label className="block text-sm font-semibold text-secondary-700 mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg focus:border-primary-500 focus:outline-none"
-                    placeholder="email@example.com (không bắt buộc)"
-                    disabled={loading}
-                  />
-                </div>
-
                 {/* Sản phẩm quan tâm */}
                 <div>
                   <label className="block text-sm font-semibold text-secondary-700 mb-2">
@@ -254,54 +238,6 @@ export function QuoteSection() {
                     onChange={handleChange}
                     className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg focus:border-primary-500 focus:outline-none"
                     placeholder="Nhập sản phẩm bạn quan tâm (không bắt buộc)"
-                    disabled={loading}
-                  />
-                </div>
-
-                {/* Số lượng */}
-                <div>
-                  <label className="block text-sm font-semibold text-secondary-700 mb-2">
-                    Số lượng
-                  </label>
-                  <input
-                    type="number"
-                    name="quantity"
-                    value={formData.quantity}
-                    onChange={handleChange}
-                    min="1"
-                    className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg focus:border-primary-500 focus:outline-none"
-                    disabled={loading}
-                  />
-                </div>
-
-                {/* Công ty */}
-                <div>
-                  <label className="block text-sm font-semibold text-secondary-700 mb-2">
-                    Tên công ty
-                  </label>
-                  <input
-                    type="text"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg focus:border-primary-500 focus:outline-none"
-                    placeholder="Nhập tên công ty (không bắt buộc)"
-                    disabled={loading}
-                  />
-                </div>
-
-                {/* Địa chỉ */}
-                <div>
-                  <label className="block text-sm font-semibold text-secondary-700 mb-2">
-                    Địa chỉ
-                  </label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg focus:border-primary-500 focus:outline-none"
-                    placeholder="Nhập địa chỉ (không bắt buộc)"
                     disabled={loading}
                   />
                 </div>

@@ -79,18 +79,6 @@ export default function App() {
           </>
         )}
 
-        {currentPage === 'quote-request' && (
-          <>
-            <Header onNavigate={handleNavigation} />
-            <QuoteRequestPage 
-              onNavigate={handleNavigation} 
-              selectedProduct={selectedProduct}
-              selectedProductId={selectedProductId}
-            />
-            <Footer onNavigate={handleNavigation} />
-          </>
-        )}
-
         {currentPage === 'admin' && (
           <AdminPage onNavigate={handleNavigation} />
         )}
