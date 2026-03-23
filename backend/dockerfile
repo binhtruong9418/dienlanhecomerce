@@ -7,10 +7,8 @@ RUN npm install
 
 COPY . .
 
-RUN echo "=== FILE TREE ===" && ls -la && ls -la src || true
-
-RUN npm run build
-
+RUN npx tsc
+RUN echo "=== DIST ===" && ls -la dist || true
 EXPOSE 5000
 
 CMD ["npm", "start"]
