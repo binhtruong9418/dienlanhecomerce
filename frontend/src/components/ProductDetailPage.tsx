@@ -108,11 +108,11 @@ export function ProductDetailPage({ onNavigate, productId }: ProductDetailPagePr
           {/* Left Column - Gallery */}
           <div>
             {/* Main Image */}
-            <div className="bg-white rounded-2xl overflow-hidden mb-4 border-2 border-secondary-200">
+            <div className="aspect-square w-full bg-white">
               <img
                 src={getSafeImageUrl(product.images?.[selectedImage])}
                 alt={product.name}
-                className="w-full h-[400px] md:h-[500px] object-cover"
+                className="w-full h-full object-cover"
                 onError={(e) => handleImageError(e, FALLBACK_IMAGES.product)}
               />
             </div>
@@ -130,12 +130,15 @@ export function ProductDetailPage({ onNavigate, productId }: ProductDetailPagePr
                         : 'border-secondary-200 hover:border-primary-400'
                     }`}
                   >
-                    <img
-                      src={getSafeImageUrl(image)}
-                      alt={`${product.name} ${index + 1}`}
-                      className="w-full h-20 object-cover"
-                      onError={(e) => handleImageError(e, FALLBACK_IMAGES.product)}
-                    />
+                    
+                    <div className="aspect-square">
+                      <img
+                        src={getSafeImageUrl(image)}
+                        alt={`${product.name} ${index + 1}`}
+                        className="w-full aspect-square object-cover"
+                        onError={(e) => handleImageError(e, FALLBACK_IMAGES.product)}
+                      />
+                    </div>
                   </button>
                 ))}
               </div>
@@ -315,13 +318,13 @@ export function ProductDetailPage({ onNavigate, productId }: ProductDetailPagePr
                   className="bg-white border border-secondary-200 rounded-xl overflow-hidden hover:border-primary-500 hover:shadow-xl transition-all group cursor-pointer"
                   onClick={() => onNavigate?.('product-detail', relatedProduct.name, relatedProduct._id)}
                 >
-                  <div className="relative h-48 bg-secondary-100 overflow-hidden">
+                  <div className="aspect-square bg-secondary-100 overflow-hidden">
                     <img
                       src={getSafeImageUrl(relatedProduct.images?.[0])}
                       alt={relatedProduct.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       onError={(e) => handleImageError(e, FALLBACK_IMAGES.product)}
-                    />
+                    />  
                   </div>
                   <div className="p-4">
                     <h4 className="font-semibold text-secondary-900 mb-2 line-clamp-2 min-h-[3rem]">{relatedProduct.name}</h4>
