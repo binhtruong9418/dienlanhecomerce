@@ -1,5 +1,5 @@
 // components/Categories.tsx
-import { Wind, Fan } from 'lucide-react';
+import { Wind, Fan, Settings } from 'lucide-react';
 import { useCategories } from '../hooks/useCategories';
 import { handleImageError, getSafeImageUrl, FALLBACK_IMAGES } from '../utils/imageUtils';
 
@@ -11,6 +11,7 @@ interface CategoriesProps {
 const getCategoryIcon = (categoryName: string) => {
   const name = categoryName.toLowerCase();
   if (name.includes('quạt') || name.includes('fan')) return Fan;
+  else if (name.includes('phụ kiện') || name.includes('part')) return Settings;
   return Wind; // Mặc định
 };
 

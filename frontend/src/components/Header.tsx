@@ -28,12 +28,13 @@ export function Header({ onNavigate }: HeaderProps) {
           {/* Logo */}
           <div className="flex items-center gap-2 cursor-pointer" onClick={handleHomeClick}>
             <div className="bg-primary-600 text-white p-2 rounded-lg">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              {/* <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
                 <path d="M12 18v-4"></path>
                 <path d="M12 10v.01"></path>
-              </svg>
+              </svg> */}
+              <img className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" src="https://res.cloudinary.com/dhiczfj7e/image/upload/v1774328232/LOGO-QHN_h3xglw.png" alt="" />
             </div>
             <div>
               <div className="font-bold text-xl text-primary-700">DienlanhPRO</div>
