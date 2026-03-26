@@ -8,7 +8,6 @@ import { QuoteSection } from './components/QuoteSection';
 import { Footer } from './components/Footer';
 import { ProductListPage } from './components/ProductListPage';
 import { ProductDetailPage } from './components/ProductDetailPage';
-import { QuoteRequestPage } from './components/QuoteRequestPage';
 import { AdminPage } from './components/AdminPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { Product } from './types/product';

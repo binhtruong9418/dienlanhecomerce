@@ -38,7 +38,7 @@ export function Header({ onNavigate }: HeaderProps) {
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
           <div className="flex items-center gap-2 cursor-pointer" onClick={handleHomeClick}>
-            <div className="bg-primary-600 text-white p-2 rounded-lg">
+            <div className="bg-white shadow-sm text-white p-2 rounded-lg">
               <img 
                 src="https://res.cloudinary.com/dhiczfj7e/image/upload/v1774328232/LOGO-QHN_h3xglw.png" 
                 alt="Logo" 

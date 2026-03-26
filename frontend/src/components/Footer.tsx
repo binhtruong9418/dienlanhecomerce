@@ -14,10 +14,15 @@ export function Footer({ onNavigate }: FooterProps) {
           {/* Column 1: Company Info + Contact */}
           <div>
             <div className="flex items-center gap-2 mb-6">
-              <div className="bg-primary-600 text-white p-2 rounded-lg">
-                <Zap className="w-6 h-6" />
+              <div className="bg-white shadow-sm text-white p-2 rounded-lg">
+                <img 
+                  src="https://res.cloudinary.com/dhiczfj7e/image/upload/v1774328232/LOGO-QHN_h3xglw.png" 
+                  alt="Logo" 
+                  className="w-6 h-6 object-contain"
+                />
+                {/* <img className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" src="https://res.cloudinary.com/dhiczfj7e/image/upload/v1774328232/LOGO-QHN_h3xglw.png" alt="" /> */}
               </div>
-              <div className="font-bold text-xl text-white">DienlanhPRO</div>
+              <div className="font-bold text-xl text-white">PK Quạt hơi nước</div>
             </div>
             
             <h4 className="footer-title text-white font-semibold mb-4">Thông tin liên hệ</h4>
