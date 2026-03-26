@@ -13,7 +13,18 @@ export function Header({ onNavigate }: HeaderProps) {
     onNavigate?.('products');
     setMobileMenuOpen(false);
   };
+  const handleQuoteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onNavigate?.('home'); // về trang home
 
+    // delay để đảm bảo DOM render xong rồi mới scroll
+    setTimeout(() => {
+      const el = document.getElementById('quote');
+      el?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+    
+    setMobileMenuOpen(false);
+  };
   const handleHomeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     onNavigate?.('home');
@@ -28,16 +39,15 @@ export function Header({ onNavigate }: HeaderProps) {
           {/* Logo */}
           <div className="flex items-center gap-2 cursor-pointer" onClick={handleHomeClick}>
             <div className="bg-primary-600 text-white p-2 rounded-lg">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <path d="M12 18v-4"></path>
-                <path d="M12 10v.01"></path>
-              </svg>
+              <img 
+                src="https://res.cloudinary.com/dhiczfj7e/image/upload/v1774328232/LOGO-QHN_h3xglw.png" 
+                alt="Logo" 
+                className="w-6 h-6 object-contain"
+              />
               {/* <img className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" src="https://res.cloudinary.com/dhiczfj7e/image/upload/v1774328232/LOGO-QHN_h3xglw.png" alt="" /> */}
             </div>
             <div>
-              <div className="font-bold text-xl text-primary-700">DienlanhPRO</div>
+              <div className="font-bold text-xl text-primary-700">PK Quạt hơi nước</div>
               <div className="text-xs text-secondary-500 hidden sm:block">Giải pháp điện lạnh chuyên nghiệp</div>
             </div>
           </div>
@@ -50,7 +60,7 @@ export function Header({ onNavigate }: HeaderProps) {
             <a href="#products" onClick={handleProductsClick} className="text-secondary-700 hover:text-primary-600 font-medium transition-colors">
               Sản phẩm
             </a>
-            <a href="#quote" className="text-secondary-700 hover:text-primary-600 font-medium transition-colors">
+            <a href="#quote" onClick={handleQuoteClick} className="text-secondary-700 hover:text-primary-600 font-medium transition-colors">
               Yêu cầu báo giá
             </a>
             
