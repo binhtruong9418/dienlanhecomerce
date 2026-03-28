@@ -49,10 +49,16 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
+// Trust proxy (nginx) để lấy IP thật của client
+app.set('trust proxy', 1);
+
+// Rate limiting - per real client IP
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000, // 15 phút
+  max: 500, // 500 requests/IP/15 phút (thoải mái hơn cho web thật)
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Quá nhiều yêu cầu, vui lòng thử lại sau.' },
 });
 app.use('/api', limiter);
 
