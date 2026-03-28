@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:18-alpine
 
 WORKDIR /app
 
@@ -6,9 +6,8 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+RUN npm run build
 
-RUN npx tsc
-RUN echo "=== DIST ===" && ls -la dist || true
 EXPOSE 5000
 
 CMD ["npm", "start"]
