@@ -1,87 +1,71 @@
-import { useState, useEffect, React } from 'react';
-import { Header } from './components/Header';
-import { Hero } from './components/Hero';
-import { Categories } from './components/Categories';
-import { FeaturedProducts } from './components/FeaturedProducts';
-import { Benefits } from './components/Benefits';
-import { QuoteSection } from './components/QuoteSection';
-import { Footer } from './components/Footer';
-import { ProductListPage } from './components/ProductListPage';
-import { ProductDetailPage } from './components/ProductDetailPage';
-import { AdminPage } from './components/AdminPage';
+import { BrowserRouter, Routes, Route, useParams, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import { Product } from './types/product';
+import { MainLayout, useCompatNavigation } from './layouts/MainLayout';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// Pages
+import { HomePage } from './pages/HomePage';
+import { ProductListPage } from './pages/ProductListPage';
+import { ProductDetailPage } from './pages/ProductDetailPage';
+
+// Admin Pages and Layout
+import { AdminLayout } from './layouts/AdminLayout';
+import { DashboardAdmin } from './pages/admin/DashboardAdmin';
+import { ProductsAdmin } from './pages/admin/ProductsAdmin';
+import { CategoriesAdmin } from './pages/admin/CategoriesAdmin';
+import { RequestsAdmin } from './pages/admin/RequestsAdmin';
+import { SettingsAdmin } from './pages/admin/SettingsAdmin';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false
+    }
+  }
+});
+
+// Wrappers needed because pages currently expect props
+const ProductsPageWrapper = () => {
+  const { handleNavigation, handleProductSelect } = useCompatNavigation();
+  const { categorySlug } = useParams<{ categorySlug: string }>();
+  return <ProductListPage onNavigate={handleNavigation} onProductSelect={handleProductSelect} categorySlug={categorySlug} />;
+};
+
+const ProductDetailWrapper = () => {
+  const { handleNavigation } = useCompatNavigation();
+  const { slug } = useParams<{ slug: string }>();
+  return <ProductDetailPage onNavigate={handleNavigation} productId={slug} />;
+};
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'home' | 'products' | 'product-detail' | 'quote-request' | 'admin'>('home');
-  const [selectedProduct, setSelectedProduct] = useState<string>('');
-  const [selectedProductId, setSelectedProductId] = useState<string>('');
-
-  const handleNavigation = (
-    page: 'home' | 'products' | 'product-detail' | 'quote-request' | 'admin',
-    productName?: string,
-    productId?: string
-  ) => {
-    setCurrentPage(page);
-    if (productName) {
-      setSelectedProduct(productName);
-    }
-    if (productId) {
-      setSelectedProductId(productId);
-    }
-    window.scrollTo(0, 0);
-  };
-
-  const handleProductSelect = (product: Product) => {
-    setSelectedProduct(product.name);
-    setSelectedProductId(product._id);
-    setCurrentPage('product-detail');
-    window.scrollTo(0, 0);
-  };
-
   return (
-    <AuthProvider>
-      <div className="min-h-screen">
-        {currentPage === 'home' && (
-          <>
-            <Header onNavigate={handleNavigation} />
-            <main>
-              <Hero />
-              <Categories onNavigate={handleNavigation} />
-              <FeaturedProducts onNavigate={handleNavigation} onProductSelect={handleProductSelect} />
-              <Benefits />
-              <QuoteSection />
-            </main>
-            <Footer onNavigate={handleNavigation} />
-          </>
-        )}
-        
-        {currentPage === 'products' && (
-          <>
-            <Header onNavigate={handleNavigation} />
-            <ProductListPage 
-              onNavigate={handleNavigation} 
-              onProductSelect={handleProductSelect}
-            />
-            <Footer onNavigate={handleNavigation} />
-          </>
-        )}
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <BrowserRouter>
+          <div className="min-h-screen">
+            <Routes>
+              {/* Public routes wrapped in Main Layout */}
+              <Route element={<MainLayout />}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/products" element={<ProductsPageWrapper />} />
+                <Route path="/products/:categorySlug" element={<ProductsPageWrapper />} />
+                <Route path="/product/:slug" element={<ProductDetailWrapper />} />
+              </Route>
 
-        {currentPage === 'product-detail' && (
-          <>
-            <Header onNavigate={handleNavigation} />
-            <ProductDetailPage 
-              onNavigate={handleNavigation} 
-              productId={selectedProductId}
-            />
-            <Footer onNavigate={handleNavigation} />
-          </>
-        )}
-
-        {currentPage === 'admin' && (
-          <AdminPage onNavigate={handleNavigation} />
-        )}
-      </div>
-    </AuthProvider>
+              {/* Admin Routes with React Query and React Router Outlet Component */}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="dashboard" element={<DashboardAdmin />} />
+                <Route path="products" element={<ProductsAdmin />} />
+                <Route path="categories" element={<CategoriesAdmin />} />
+                <Route path="requests" element={<RequestsAdmin />} />
+                <Route path="settings" element={<SettingsAdmin />} />
+              </Route>
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }

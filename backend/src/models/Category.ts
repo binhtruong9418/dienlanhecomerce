@@ -7,7 +7,7 @@ export interface ICategory extends Document {
   image: string;
   order: number;
   parent?: mongoose.Types.ObjectId;
-  status: 'active' | 'inactive';
+  status: 'active' | 'inactive' | 'deleted';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -45,7 +45,7 @@ const categorySchema = new Schema<ICategory>(
     },
     status: {
       type: String,
-      enum: ['active', 'inactive'],
+      enum: ['active', 'inactive', 'deleted'],
       default: 'active',
     },
   },

@@ -1,11 +1,8 @@
 // components/Categories.tsx
 import { Wind, Fan, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useCategories } from '../hooks/useCategories';
 import { handleImageError, getSafeImageUrl, FALLBACK_IMAGES } from '../utils/imageUtils';
-
-interface CategoriesProps {
-  onNavigate?: (page: 'products') => void;
-}
 
 // Map icon dựa trên tên hoặc slug
 const getCategoryIcon = (categoryName: string) => {
@@ -15,7 +12,8 @@ const getCategoryIcon = (categoryName: string) => {
   return Wind; // Mặc định
 };
 
-export function Categories({ onNavigate }: CategoriesProps) {
+export function Categories() {
+  const navigate = useNavigate();
   const { categories, loading, error } = useCategories();
 
   // Chỉ lấy categories active
@@ -92,7 +90,10 @@ export function Categories({ onNavigate }: CategoriesProps) {
                     {category.description || `Sản phẩm ${category.name} chất lượng cao`}
                   </p>
                   <button 
-                    onClick={() => onNavigate?.('products')} 
+                    onClick={() => {
+                      navigate(`/products/${category.slug}`);
+                      window.scrollTo(0, 0);
+                    }}
                     className="text-primary-600 font-semibold hover:text-primary-700 flex items-center gap-2 group-hover:gap-3 transition-all"
                   >
                     Xem chi tiết

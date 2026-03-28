@@ -1,4 +1,4 @@
-import { useState, useEffect, React } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
   Package,
@@ -30,6 +30,8 @@ import {
   Link,
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import RichTextEditor from '../components/RichTextEditor';
+import { Toaster } from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import adminApi, { DashboardStats } from '../api/adminApi';
 import productApi from '../api/productApi';
@@ -39,8 +41,8 @@ import { Product } from '../types/product';
 import { Category } from '../types/category';
 import { QuoteRequest } from '../types/quote';
 import { handleImageError, getSafeImageUrl, FALLBACK_IMAGES } from '../utils/imageUtils';
-import { RequestsContent } from './RequestsContent';
-
+import { RequestsContent } from '../components/RequestsContent';
+import { SettingsAdmin } from './admin/SettingsAdmin';
 interface AdminPageProps {
   onNavigate?: (page: 'home') => void;
 }
@@ -579,9 +581,9 @@ export function AdminPage({ onNavigate }: AdminPageProps) {
     setLoading(true);
     try {
       await quoteApi.updateQuoteStatus(id, status, quotedPrice);
-      setQuoteRequests(prev => prev.map(q => q._id === id ? { ...q, status, quotedPrice } : q));
+      setQuoteRequests(prev => prev.map(q => q._id === id ? { ...q, status: status as any, quotedPrice } : q));
       if (selectedRequest?._id === id) {
-        setSelectedRequest({ ...selectedRequest, status, quotedPrice });
+        setSelectedRequest({ ...selectedRequest, status: status as any, quotedPrice });
       }
     } catch (error) {
       console.error('Failed to update quote status:', error);
@@ -642,6 +644,7 @@ export function AdminPage({ onNavigate }: AdminPageProps) {
 
   return (
     <div className="min-h-screen bg-secondary-50 flex">
+      <Toaster position="top-right" />
       {/* Loading overlay */}
       {loading && (
         <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center">
@@ -1105,140 +1108,7 @@ export function AdminPage({ onNavigate }: AdminPageProps) {
 
         {/* Settings */}
         {activeMenu === 'settings' && (
-          <main className="flex-1 p-6 overflow-auto">
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-white rounded-xl border border-secondary-200 overflow-hidden">
-                <div className="bg-gradient-to-r from-primary-600 to-primary-700 p-6 text-white">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Settings className="w-8 h-8" />
-                    <h2 className="text-2xl font-bold">Quản lý thông tin công ty</h2>
-                  </div>
-                  <p className="text-primary-100">Cập nhật thông tin liên hệ và cài đặt hiển thị</p>
-                </div>
-                <form onSubmit={handleSaveCompanyInfo} className="p-6 space-y-6">
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                      <Building2 className="w-4 h-4" />
-                      Tên công ty
-                    </label>
-                    <input
-                      type="text"
-                      value={companyInfo.companyName}
-                      onChange={e => setCompanyInfo({...companyInfo, companyName: e.target.value})}
-                      className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg focus:border-primary-600"
-                    />
-                  </div>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                        <Phone className="w-4 h-4" />
-                        Số điện thoại
-                      </label>
-                      <input
-                        type="text"
-                        value={companyInfo.phone}
-                        onChange={e => setCompanyInfo({...companyInfo, phone: e.target.value})}
-                        className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg"
-                      />
-                    </div>
-                    <div>
-                      <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                        <Mail className="w-4 h-4" />
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        value={companyInfo.email}
-                        onChange={e => setCompanyInfo({...companyInfo, email: e.target.value})}
-                        className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                      <MapPin className="w-4 h-4" />
-                      Địa chỉ
-                    </label>
-                    <input
-                      type="text"
-                      value={companyInfo.address}
-                      onChange={e => setCompanyInfo({...companyInfo, address: e.target.value})}
-                      className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                      <Clock className="w-4 h-4" />
-                      Giờ làm việc
-                    </label>
-                    <input
-                      type="text"
-                      value={companyInfo.workingHours}
-                      onChange={e => setCompanyInfo({...companyInfo, workingHours: e.target.value})}
-                      className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg"
-                    />
-                  </div>
-                  <div className="border-t pt-6">
-                    <h3 className="font-bold mb-4">Liên kết mạng xã hội</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                          <Link className="w-4 h-4" />
-                          Link Zalo
-                        </label>
-                        <input
-                          type="url"
-                          value={companyInfo.zaloLink}
-                          onChange={e => setCompanyInfo({...companyInfo, zaloLink: e.target.value})}
-                          className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg"
-                        />
-                      </div>
-                      <div>
-                        <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                          <Link className="w-4 h-4" />
-                          Link Facebook
-                        </label>
-                        <input
-                          type="url"
-                          value={companyInfo.facebookLink}
-                          onChange={e => setCompanyInfo({...companyInfo, facebookLink: e.target.value})}
-                          className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg"
-                        />
-                      </div>
-                      <div>
-                        <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                          <Image className="w-4 h-4" />
-                          URL mã QR Zalo
-                        </label>
-                        <input
-                          type="url"
-                          value={companyInfo.qrCodeUrl}
-                          onChange={e => setCompanyInfo({...companyInfo, qrCodeUrl: e.target.value})}
-                          className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-3 pt-4">
-                    <button
-                      type="button"
-                      onClick={() => fetchCompanyInfo()}
-                      className="flex-1 px-6 py-3 border-2 border-secondary-300 rounded-lg font-semibold hover:bg-secondary-50"
-                    >
-                      Đặt lại
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="flex-1 px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 disabled:opacity-50 flex items-center justify-center gap-2"
-                    >
-                      {loading ? <Loader className="w-5 h-5 animate-spin" /> : 'Lưu thay đổi'}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </main>
+          <SettingsAdmin />
         )}
       </div>
 
@@ -1697,23 +1567,14 @@ function ProductModal({ product, formData, setFormData, categories, onClose, onS
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="block text-sm font-semibold">Mô tả chi tiết</label>
-              <button
-                type="button"
-                onClick={handleInsertImage}
-                className="flex items-center gap-2 px-3 py-2 text-sm border border-secondary-300 rounded-lg hover:bg-secondary-50 transition-colors"
-              >
-                <Image className="w-4 h-4" />
-                Chèn ảnh từ Cloudinary
-              </button>
             </div>
-            <textarea
-              id="product-description"
-              rows={6}
-              value={formData.description || ''}
-              onChange={e => setFormData({...formData, description: e.target.value})}
-              className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg font-mono text-sm"
-              placeholder="Mô tả chi tiết sản phẩm..."
-            />
+            <div className="border border-secondary-200 rounded-lg overflow-hidden">
+              <RichTextEditor
+                value={formData.description || ''}
+                onChange={(content) => setFormData({ ...formData, description: content })}
+                onImageUpload={onDescriptionImageUpload}
+              />
+            </div>
           </div>
 
           {/* Ảnh sản phẩm */}

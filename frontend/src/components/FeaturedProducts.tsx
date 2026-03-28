@@ -23,7 +23,7 @@ export function FeaturedProducts({ onNavigate, onProductSelect }: FeaturedProduc
 
   // Kiểm tra products có phải là array không
   const productList = Array.isArray(products) ? products : [];
-  
+
   if (productList.length === 0) {
     return (
       <section className="py-16 bg-secondary-50">
@@ -49,7 +49,7 @@ export function FeaturedProducts({ onNavigate, onProductSelect }: FeaturedProduc
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {productList.map((product) => (
             <div
-              key={product._id || product.id}
+              key={product._id}
               className="bg-white rounded-xl overflow-hidden border border-secondary-200 hover:border-primary-500 hover:shadow-xl transition-all group cursor-pointer"
               onClick={() => onProductSelect?.(product)}
             >
@@ -73,7 +73,7 @@ export function FeaturedProducts({ onNavigate, onProductSelect }: FeaturedProduc
               {/* Content */}
               <div className="p-5">
                 <h3 className="mb-3 line-clamp-2 min-h-[3.5rem]">{product.name}</h3>
-                
+
                 {/* Specs */}
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
@@ -99,8 +99,8 @@ export function FeaturedProducts({ onNavigate, onProductSelect }: FeaturedProduc
         {/* View More */}
         {productList.length > 0 && (
           <div className="text-center mt-12">
-            <button 
-              onClick={() => onNavigate?.('products')} 
+            <button
+              onClick={() => onNavigate?.('products')}
               className="border-2 border-primary-600 text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-primary-600 hover:text-white transition-colors"
             >
               Xem tất cả sản phẩm

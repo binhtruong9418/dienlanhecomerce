@@ -1,19 +1,29 @@
 import { useState, useEffect } from 'react';
-import { FilterSidebar } from './FilterSidebar';
-import { ProductListCard } from './ProductListCard';
+import { useSearchParams } from 'react-router-dom';
+import { FilterSidebar } from '../components/FilterSidebar';
+import { ProductListCard } from '../components/ProductListCard';
 import { Filter, Grid, List, ArrowLeft, Loader } from 'lucide-react';
 import { useProducts } from '../hooks/useProducts';
+import { useCategories } from '../hooks/useCategories';
 import { Product } from '../types/product';
 
 interface ProductListPageProps {
   onNavigate?: (page: 'home' | 'product-detail') => void;
   onProductSelect?: (product: Product) => void;
+  categorySlug?: string;
 }
 
-export function ProductListPage({ onNavigate, onProductSelect }: ProductListPageProps) {
+export function ProductListPage({ onNavigate, onProductSelect, categorySlug }: ProductListPageProps) {
   const [filterOpen, setFilterOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchParams] = useSearchParams();
+  const searchKeyword = searchParams.get('q') || undefined;
   
+  const { categories } = useCategories();
+
+  // Find category name from slug for display
+  const activeCategory = categorySlug ? categories.find(c => c.slug === categorySlug) : null;
+
   const {
     products,
     loading,
@@ -23,7 +33,18 @@ export function ProductListPage({ onNavigate, onProductSelect }: ProductListPage
     filters,
     updateFilters,
     setPage,
-  } = useProducts();
+  } = useProducts({
+    ...(categorySlug ? { category: categorySlug } : {}),
+    ...(searchKeyword ? { search: searchKeyword } : {})
+  });
+
+  // When categorySlug or search URL navigation changes, update filters
+  useEffect(() => {
+    updateFilters({ 
+      category: categorySlug || undefined,
+      search: searchKeyword || undefined
+    });
+  }, [categorySlug, searchKeyword]);
 
   const handleSortChange = (value: string) => {
     switch (value) {
@@ -59,13 +80,25 @@ export function ProductListPage({ onNavigate, onProductSelect }: ProductListPage
               Trang chủ
             </button>
             <span>/</span>
-            <span className="text-secondary-900 font-medium">Sản phẩm</span>
+            {activeCategory ? (
+              <>
+                <a href="/products" className="hover:text-primary-600">Sản phẩm</a>
+                <span>/</span>
+                <span className="text-secondary-900 font-medium">{activeCategory.name}</span>
+              </>
+            ) : (
+              <span className="text-secondary-900 font-medium">Sản phẩm</span>
+            )}
           </div>
 
           {/* Page Title & Controls */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="mb-2">Tất cả sản phẩm</h1>
+              <h1 className="mb-2">
+                {searchKeyword 
+                  ? `Kết quả tìm kiếm cho "${searchKeyword}"` 
+                  : (activeCategory ? activeCategory.name : 'Tất cả sản phẩm')}
+              </h1>
               <p className="text-secondary-600">Tìm thấy {total} sản phẩm</p>
             </div>
 
@@ -157,7 +190,7 @@ export function ProductListPage({ onNavigate, onProductSelect }: ProductListPage
                 } gap-6`}>
                   {products.map(product => (
                     <ProductListCard 
-                      key={product._id || product.id} 
+                      key={product._id} 
                       product={product}
                       viewMode={viewMode}
                       onViewDetail={() => onProductSelect?.(product)}

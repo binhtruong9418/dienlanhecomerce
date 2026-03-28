@@ -12,6 +12,7 @@ import productRoutes from './routes/productRoutes';
 import categoryRoutes from './routes/categoryRoutes';
 import quoteRoutes from './routes/quoteRoutes';
 import adminRoutes from './routes/adminRoutes';
+import settingRoutes from './routes/settingRoutes';
 
 // Import database connection
 import connectDB from './config/database';
@@ -39,9 +40,10 @@ app.use(cors({
         'http://phukienquathoinuoc.com',
         'https://phukienquathoinuoc.com',
         'http://www.phukienquathoinuoc.com',
-        'https://www.phukienquathoinuoc.com'
+        'https://www.phukienquathoinuoc.com',
+        'http://localhost'
       ]
-    : ['http://localhost:3000', 'http://localhost:3001'],
+    : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:4173'],
   credentials: true,
 }));
 app.use(express.json());
@@ -60,6 +62,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/quotes', quoteRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/settings', settingRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

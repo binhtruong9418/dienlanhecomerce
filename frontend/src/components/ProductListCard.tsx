@@ -23,20 +23,19 @@ export function ProductListCard({
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
           onError={(e) => handleImageError(e, FALLBACK_IMAGES.product)}
         />
-        
+
         {/* Stock Badge */}
-        <div className={`absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 ${
-          product.inStock 
-            ? 'bg-green-500 text-white' 
+        <div className={`absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 ${product.inStock
+            ? 'bg-green-500 text-white'
             : 'bg-red-500 text-white'
-        }`}>
+          }`}>
           {product.inStock && <CheckCircle className="w-3 h-3" />}
           {product.inStock ? 'Còn hàng' : 'Hết hàng'}
         </div>
 
         {/* Type Badge */}
         <div className="absolute top-3 left-3 bg-primary-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-          {product.category?.name || 'Sản phẩm'}
+          {product?.category?.name || 'Sản phẩm'}
         </div>
       </div>
 

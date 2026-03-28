@@ -1,6 +1,7 @@
 // QuoteSection.tsx
 import { Send, Phone, Upload, X, FileText, Loader, CheckCircle } from 'lucide-react';
-import { useState, React } from 'react';
+import React, { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import quoteApi from '../api/quoteApi';
 
 export function QuoteSection() {
@@ -16,51 +17,13 @@ export function QuoteSection() {
   });
   
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    console.log('📝 QuoteSection form submitted:', formData);
-    console.log('📎 Files:', uploadedFiles);
-    
-    // Chỉ validate số điện thoại
-    if (!formData.phone || formData.phone.trim() === '') {
-      setError('Vui lòng nhập số điện thoại');
-      return;
-    }
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const formDataToSend = new FormData();
-      
-      // Gửi tất cả các trường, nếu trống thì gửi giá trị mặc định
-      formDataToSend.append('customerName', formData.customerName || 'Khách hàng');
-      formDataToSend.append('phone', formData.phone);
-      formDataToSend.append('email', formData.email || 'khachhang@email.com');
-      formDataToSend.append('product', formData.product || 'Sản phẩm điện lạnh');
-      formDataToSend.append('quantity', formData.quantity || '1');
-      formDataToSend.append('notes', formData.notes || 'Yêu cầu tư vấn từ website');
-      formDataToSend.append('company', formData.company || 'Khách lẻ');
-      formDataToSend.append('address', formData.address || 'Việt Nam');
-
-      // Append files nếu có
-      uploadedFiles.forEach(file => {
-        formDataToSend.append('files', file);
-      });
-      
-      console.log('📤 Sending to API...');
-      
-      const response = await quoteApi.submitQuoteRequest(formDataToSend);
-      console.log('📥 API response:', response);
-      
+  const mutation = useMutation({
+    mutationFn: (formDataToSend: FormData) => quoteApi.submitQuoteRequest(formDataToSend),
+    onSuccess: () => {
       setSuccess(true);
-      
-      // Reset form
       setFormData({
         customerName: '',
         phone: '',
@@ -72,19 +35,41 @@ export function QuoteSection() {
         address: '',
       });
       setUploadedFiles([]);
-      
-      // Ẩn thông báo thành công sau 3 giây
-      setTimeout(() => {
-        setSuccess(false);
-      }, 3000);
-      
-    } catch (err: any) {
+      setTimeout(() => setSuccess(false), 3000);
+    },
+    onError: (err: any) => {
       console.error('❌ Error submitting quote:', err);
       setError(err.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại sau.');
-    } finally {
-      setLoading(false);
     }
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.phone || formData.phone.trim() === '') {
+      setError('Vui lòng nhập số điện thoại');
+      return;
+    }
+    setError(null);
+    
+    const formDataToSend = new FormData();
+    formDataToSend.append('customerName', formData.customerName || 'Khách hàng');
+    formDataToSend.append('phone', formData.phone);
+    formDataToSend.append('email', formData.email || 'khachhang@email.com');
+    formDataToSend.append('product', formData.product || 'Sản phẩm điện lạnh');
+    formDataToSend.append('quantity', formData.quantity || '1');
+    formDataToSend.append('notes', formData.notes || 'Yêu cầu tư vấn từ website');
+    formDataToSend.append('company', formData.company || 'Khách lẻ');
+    formDataToSend.append('address', formData.address || 'Việt Nam');
+
+    uploadedFiles.forEach(file => {
+      formDataToSend.append('files', file);
+    });
+    
+    mutation.mutate(formDataToSend);
   };
+
+  const isLoading = mutation.isPending;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -205,7 +190,7 @@ export function QuoteSection() {
                     onChange={handleChange}
                     className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg focus:border-primary-500 focus:outline-none"
                     placeholder="Nhập họ tên của bạn (không bắt buộc)"
-                    disabled={loading}
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -222,7 +207,7 @@ export function QuoteSection() {
                     required
                     className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg focus:border-primary-500 focus:outline-none"
                     placeholder="0909 xxx xxx"
-                    disabled={loading}
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -238,7 +223,7 @@ export function QuoteSection() {
                     onChange={handleChange}
                     className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg focus:border-primary-500 focus:outline-none"
                     placeholder="Nhập sản phẩm bạn quan tâm (không bắt buộc)"
-                    disabled={loading}
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -254,7 +239,7 @@ export function QuoteSection() {
                     rows={3}
                     className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg focus:border-primary-500 focus:outline-none resize-none"
                     placeholder="Yêu cầu bổ sung, thời gian giao hàng mong muốn, địa chỉ lắp đặt... (không bắt buộc)"
-                    disabled={loading}
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -271,12 +256,12 @@ export function QuoteSection() {
                       multiple
                       className="hidden"
                       id="fileInput"
-                      disabled={loading}
+                      disabled={isLoading}
                     />
                     <label
                       htmlFor="fileInput"
                       className={`bg-primary-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-primary-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 cursor-pointer ${
-                        loading ? 'opacity-50 cursor-not-allowed' : ''
+                        isLoading ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
                     >
                       <Upload className="w-5 h-5" />
@@ -287,7 +272,7 @@ export function QuoteSection() {
                         <div key={index} className="bg-gray-100 px-3 py-2 rounded-lg flex items-center gap-2">
                           <FileText className="w-4 h-4" />
                           <span className="text-sm truncate max-w-[150px]">{file.name}</span>
-                          {!loading && (
+                          {!isLoading && (
                             <button
                               type="button"
                               onClick={() => handleRemoveFile(index)}
@@ -304,10 +289,10 @@ export function QuoteSection() {
 
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={isLoading}
                   className="w-full bg-primary-600 text-white py-4 rounded-lg font-semibold hover:bg-primary-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? (
+                  {isLoading ? (
                     <>
                       <Loader className="w-5 h-5 animate-spin" />
                       Đang gửi...

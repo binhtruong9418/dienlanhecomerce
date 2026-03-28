@@ -61,18 +61,35 @@
       proxy: {
         // Đây là phần QUAN TRỌNG NHẤT
         '/api': {
-          target: 'http://localhost:3000', // URL backend của bạn
+          target: 'http://localhost:5000', // URL backend của bạn
           changeOrigin: true,
           secure: false,
-          // Nếu BE của bạn chạy ở port khác
-          // target: 'http://192.168.1.10:3001',
-          rewrite: (path) => path.replace(/^\/api/, '')
         },
         // Nếu BE có thêm endpoint khác
         '/uploads': {
-          target: 'http://localhost:3000',
+          target: 'http://localhost:5000',
           changeOrigin: true
         }
       }
-    }  
+    },
+    preview: {
+      port: 80,
+      open: true,
+      allowedHosts: [
+        '*'
+      ],
+      proxy: {
+        // Đây là phần QUAN TRỌNG NHẤT
+        '/api': {
+          target: 'http://localhost:5000', // URL backend của bạn
+          changeOrigin: true,
+          secure: false,
+        },
+        // Nếu BE có thêm endpoint khác
+        '/uploads': {
+          target: 'http://localhost:5000',
+          changeOrigin: true
+        }
+      }
+    }
   });

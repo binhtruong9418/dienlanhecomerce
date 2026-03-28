@@ -1,56 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import categoryApi from '../api/categoryApi';
 import { Category } from '../types/category';
 
 export const useCategories = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading: loading, error } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => categoryApi.getCategories(),
+    staleTime: 5 * 60 * 1000,
+  });
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await categoryApi.getCategories();
-        setCategories(data);
-      } catch (err) {
-        setError('Không thể tải danh mục');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  return { categories, loading, error };
+  return { 
+    categories: (Array.isArray(data) ? data : data?.categories || []) as Category[], 
+    loading, 
+    error: error ? 'Không thể tải danh mục' : null 
+  };
 };
 
 export const useCategory = (slug: string) => {
-  const [category, setCategory] = useState<Category | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { data: category, isLoading: loading, error } = useQuery({
+    queryKey: ['category', slug],
+    queryFn: () => categoryApi.getCategoryBySlug(slug),
+    enabled: !!slug,
+    staleTime: 5 * 60 * 1000,
+  });
 
-  useEffect(() => {
-    const fetchCategory = async () => {
-      if (!slug) return;
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await categoryApi.getCategoryBySlug(slug);
-        setCategory(data);
-      } catch (err) {
-        setError('Không thể tải thông tin danh mục');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategory();
-  }, [slug]);
-
-  return { category, loading, error };
+  return { 
+    category, 
+    loading, 
+    error: error ? 'Không thể tải thông tin danh mục' : null 
+  };
 };

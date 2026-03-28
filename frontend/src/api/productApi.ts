@@ -128,7 +128,7 @@ const productApi = {
   },
 
   // Admin: Cập nhật trạng thái
-  updateProductStatus: async (id: string, status: 'active' | 'inactive'): Promise<Product> => {
+  updateProductStatus: async (id: string, status: 'active' | 'inactive' | 'deleted'): Promise<Product> => {
     try {
       const response = await axiosClient.patch(`/products/${id}/status`, { status });
       return response.product || response;

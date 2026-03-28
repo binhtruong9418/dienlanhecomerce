@@ -2,8 +2,6 @@ import axios from 'axios';
 
 const BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
-console.log('API Base URL:', BASE_URL);
-
 const axiosClient = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -15,12 +13,6 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
-    console.log('Request:', {
-      url: config.url,
-      method: config.method,
-      token: token ? 'exists' : 'none',
-      data: config.data
-    });
     
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -35,8 +27,6 @@ axiosClient.interceptors.request.use(
 // Response interceptor để xử lý lỗi
 axiosClient.interceptors.response.use(
   (response) => {
-    console.log('Response success:', response.data);
-    // API trả về { success: true, token, user }
     return response.data;
   },
   (error) => {

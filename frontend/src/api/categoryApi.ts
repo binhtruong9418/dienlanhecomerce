@@ -4,10 +4,11 @@ import { Category } from '../types/category';
 
 const categoryApi = {
   // Lấy tất cả danh mục
-  getCategories: async (): Promise<Category[]> => {
-    const response = await axiosClient.get('/categories');
-    // Nếu response là { success: true, categories: [...] } thì trả về response.categories
-    // Nếu response là mảng trực tiếp thì trả về response
+  getCategories: async (filters?: { status?: string }): Promise<any> => {
+    const params = new URLSearchParams();
+    if (filters?.status) params.append('status', filters.status);
+    const url = params.toString() ? `/categories?${params.toString()}` : '/categories';
+    const response = await axiosClient.get(url);
     return response.categories || response;
   },
 
@@ -35,7 +36,7 @@ const categoryApi = {
   },
 
   // Admin: Cập nhật trạng thái
-  updateCategoryStatus: async (id: string, status: 'active' | 'inactive'): Promise<Category> => {
+  updateCategoryStatus: async (id: string, status: string): Promise<Category> => {
     const response = await axiosClient.patch(`/categories/${id}/status`, { status });
     return response.category || response;
   },

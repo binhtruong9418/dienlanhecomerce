@@ -1,0 +1,68 @@
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Header } from '../components/Header';
+import { Footer } from '../components/Footer';
+import { Product } from '../types/product';
+import { useSettings } from '../hooks/useSettings';
+import { getSafeImageUrl } from '../utils/imageUtils';
+
+// Helper hook for backward-compatible navigation
+export function useCompatNavigation() {
+  const navigate = useNavigate();
+  return {
+    handleNavigation: (
+      page: 'home' | 'products' | 'product-detail' | 'quote-request' | 'admin',
+      productName?: string,
+      productId?: string
+    ) => {
+      window.scrollTo(0, 0);
+      switch (page) {
+        case 'home': navigate('/'); break;
+        case 'products': navigate('/products'); break;
+        case 'product-detail': 
+          if (productName) navigate(`/product/${productName}`);
+          else if (productId) navigate(`/product/${productId}`);
+          else navigate('/products');
+          break;
+        case 'quote-request': navigate('/#quote-request'); break;
+        case 'admin': navigate('/admin'); break;
+        default: navigate('/');
+      }
+    },
+    handleProductSelect: (product: Product) => {
+      const urlParam = product.slug || product.name || product._id;
+      navigate(`/product/${urlParam}`);
+      window.scrollTo(0, 0);
+    }
+  };
+}
+
+export const MainLayout = () => {
+  const { handleNavigation } = useCompatNavigation();
+  const { companyInfo } = useSettings();
+
+  useEffect(() => {
+    if (companyInfo) {
+      document.title = companyInfo.companyName || 'PK Quạt hơi nước';
+      
+      // Update meta description
+      let meta = document.querySelector('meta[name="description"]');
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('name', 'description');
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', companyInfo.companyName);
+
+      // We maintain the fallback favicon since we dont have it dynamic.
+    }
+  }, [companyInfo]);
+
+  return (
+    <>
+      <Header onNavigate={handleNavigation} />
+      <Outlet />
+      <Footer onNavigate={handleNavigation} />
+    </>
+  );
+};

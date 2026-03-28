@@ -7,7 +7,24 @@ import slugify from 'slugify';
 // @access  Public
 export const getCategories = async (req: Request, res: Response) => {
   try {
-    const categories = await Category.find({ status: 'active' })
+    const status = req.query.status as string;
+    const query: any = {};
+
+    // - User (no status param): only active
+    // - Admin status=all: active + inactive (exclude deleted)
+    // - Admin status=deleted: only deleted  
+    // - Admin specific status: that status
+    if (status) {
+      if (status === 'all') {
+        query.status = { $in: ['active', 'inactive'] };
+      } else {
+        query.status = status;
+      }
+    } else {
+      query.status = 'active';
+    }
+
+    const categories = await Category.find(query)
       .sort({ order: 1, name: 1 });
 
     res.json({
@@ -119,7 +136,9 @@ export const deleteCategory = async (req: Request, res: Response) => {
       });
     }
 
-    await category.deleteOne();
+    // Soft delete: set status to 'deleted'
+    category.status = 'deleted';
+    await category.save();
 
     res.json({
       success: true,

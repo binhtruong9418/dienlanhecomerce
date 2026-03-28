@@ -97,15 +97,28 @@ export const getProducts = async (req: Request, res: Response) => {
       }
   
       // Xử lý status
+      // - User (no status param): only active
+      // - Admin status=all: active + inactive (exclude deleted)
+      // - Admin status=deleted: only deleted
+      // - Admin specific status: that status
       if (status) {
-        query.status = status.toString();
+        const statusStr = status.toString();
+        if (statusStr === 'all') {
+          query.status = { $in: ['active', 'inactive'] };
+        } else {
+          query.status = statusStr;
+        }
       } else {
         query.status = 'active';
       }
   
       // Xử lý search
       if (search) {
-        query.$text = { $search: search.toString() };
+        const searchRegex = new RegExp(search.toString(), 'i');
+        query.$or = [
+          { name: searchRegex },
+          { productModel: searchRegex }
+        ];
       }
   
       // Pagination
@@ -359,7 +372,9 @@ export const deleteProduct = async (req: Request, res: Response) => {
       });
     }
 
-    await product.deleteOne();
+    // Soft delete: set status to 'deleted'
+    product.status = 'deleted';
+    await product.save();
 
     res.json({
       success: true,

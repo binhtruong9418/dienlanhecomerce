@@ -1,13 +1,12 @@
 // ProductDetailPage.tsx
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Phone, Mail, CheckCircle, Zap, Maximize2, Award, Shield, Truck, HeadphonesIcon, Loader } from 'lucide-react';
-import { useProduct } from '../hooks/useProducts';
-import productApi from '../api/productApi';
+import { useProduct, useRelatedProducts } from '../hooks/useProducts';
 import { Product } from '../types/product';
 import { handleImageError, getSafeImageUrl, FALLBACK_IMAGES } from '../utils/imageUtils';
 
 interface ProductDetailPageProps {
-  onNavigate?: (page: 'products' | 'quote-request', productName?: string, productId?: string) => void;
+  onNavigate?: (page: 'products' | 'quote-request' | 'product-detail', productName?: string, productId?: string) => void;
   productId?: string;
 }
 
@@ -35,22 +34,8 @@ const renderMarkdownImages = (text: string) => {
 
 export function ProductDetailPage({ onNavigate, productId }: ProductDetailPageProps) {
   const [selectedImage, setSelectedImage] = useState(0);
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const { product, loading, error } = useProduct(productId || '');
-
-  useEffect(() => {
-    if (product?._id) {
-      const fetchRelated = async () => {
-        try {
-          const related = await productApi.getRelatedProducts(product._id, 4);
-          setRelatedProducts(related);
-        } catch (err) {
-          console.error('Failed to fetch related products:', err);
-        }
-      };
-      fetchRelated();
-    }
-  }, [product]);
+  const { products: relatedProducts } = useRelatedProducts(product?._id || '', 4);
 
   if (loading) {
     return (

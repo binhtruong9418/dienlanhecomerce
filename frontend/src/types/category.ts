@@ -5,7 +5,7 @@ export interface Category {
     description: string;
     image: string;
     order: number;
-    status: 'active' | 'inactive';
+    status: 'active' | 'inactive' | 'deleted';
     parent?: string;
     createdAt: string;
     updatedAt: string;

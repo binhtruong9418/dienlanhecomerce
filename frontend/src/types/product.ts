@@ -6,7 +6,7 @@ export interface Product {
     _id: string;
     name: string;
     slug: string;
-  } | string; // Có thể là object hoặc string
+  } | string;
   brand: string;
   productModel: string;
   power: string;
@@ -29,7 +29,7 @@ export interface Product {
   }>;
   inStock: boolean;
   stock: number;
-  status: 'active' | 'inactive';
+  status: 'active' | 'inactive' | 'deleted';
   views: number;
   createdAt: string;
   updatedAt: string;

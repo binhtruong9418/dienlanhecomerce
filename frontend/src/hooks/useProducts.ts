@@ -1,137 +1,88 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import productApi from '../api/productApi';
 import { Product, ProductFilters, ProductsResponse } from '../types/product';
 
 export const useProducts = (initialFilters?: ProductFilters) => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(initialFilters?.page || 1);
   const [filters, setFilters] = useState<ProductFilters>(initialFilters || {});
 
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await productApi.getProducts({
-        ...filters,
-        page,
-        limit: 12
-      });
-      
-      console.log('Products response:', response);
-      
-      if (response && response.products) {
-        setProducts(response.products);
-        setTotal(response.total || 0);
-        setTotalPages(response.totalPages || 1);
-      } else {
-        setProducts([]);
-        setTotal(0);
-        setTotalPages(1);
-      }
-    } catch (err) {
-      console.error('Fetch products error:', err);
-      setError('Không thể tải danh sách sản phẩm');
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters, page]);
+  const { data, isLoading: loading, error, refetch } = useQuery({
+    queryKey: ['products', { ...filters, page }],
+    queryFn: () => productApi.getProducts({ ...filters, page, limit: 12 }),
+    staleTime: 5 * 60 * 1000,
+  });
 
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+  const response = data as ProductsResponse | undefined;
 
-  const updateFilters = (newFilters: Partial<ProductFilters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+  const updateFilters = useCallback((newFilters: Partial<ProductFilters>) => {
+    setFilters((prev: ProductFilters) => ({ ...prev, ...newFilters }));
     setPage(1);
-  };
+  }, []);
 
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     setFilters({});
     setPage(1);
-  };
+  }, []);
 
   return {
-    products,
+    products: response?.products || [],
     loading,
-    error,
-    total,
-    page,
-    totalPages,
+    error: error ? 'Không thể tải danh sách sản phẩm' : null,
+    total: response?.total || 0,
+    page: response?.page || 1,
+    totalPages: response?.totalPages || 1,
     filters,
     updateFilters,
     resetFilters,
     setPage,
-    refetch: fetchProducts,
+    refetch,
   };
 };
 
-export const useProduct = (id: string) => {
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export const useProduct = (idOrSlug: string) => {
+  const { data: product, isLoading: loading, error } = useQuery({
+    queryKey: ['product', idOrSlug],
+    queryFn: async () => {
+      const isObjectId = /^[0-9a-fA-F]{24}$/.test(idOrSlug);
+      return isObjectId ? productApi.getProductById(idOrSlug) : productApi.getProductBySlug(idOrSlug);
+    },
+    enabled: !!idOrSlug,
+    staleTime: 5 * 60 * 1000,
+  });
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      if (!id) return;
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await productApi.getProductById(id);
-        console.log('Product detail response:', response);
-        
-        if (response) {
-          setProduct(response);
-        } else {
-          setProduct(null);
-        }
-      } catch (err) {
-        console.error('Fetch product error:', err);
-        setError('Không thể tải thông tin sản phẩm');
-        setProduct(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, [id]);
-
-  return { product, loading, error };
+  return { 
+    product, 
+    loading, 
+    error: error ? 'Không thể tải thông tin sản phẩm' : null 
+  };
 };
 
 export const useFeaturedProducts = (limit: number = 6) => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { data, isLoading: loading, error } = useQuery<any>({
+    queryKey: ['featuredProducts', limit],
+    queryFn: () => productApi.getFeaturedProducts(limit),
+    staleTime: 10 * 60 * 1000,
+  });
 
-  useEffect(() => {
-    const fetchFeatured = async () => {
-      setLoading(true);
-      try {
-        const response = await productApi.getFeaturedProducts(limit);
-        console.log('Featured products response:', response);
-        
-        if (Array.isArray(response)) {
-          setProducts(response);
-        } else if (response && response.products) {
-          setProducts(response.products);
-        } else {
-          setProducts([]);
-        }
-      } catch (err) {
-        console.error('Fetch featured products error:', err);
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  return { 
+    products: (Array.isArray(data) ? data : data?.products || []) as Product[], 
+    loading, 
+    error: error ? 'Lỗi tải sản phẩm nổi bật' : null 
+  };
+};
 
-    fetchFeatured();
-  }, [limit]);
+export const useRelatedProducts = (productId: string, limit: number = 4) => {
+  const { data, isLoading: loading, error } = useQuery<any>({
+     queryKey: ['relatedProducts', productId, limit],
+     queryFn: () => productApi.getRelatedProducts(productId, limit),
+     enabled: !!productId,
+     staleTime: 10 * 60 * 1000,
+  });
 
-  return { products, loading };
+  return {
+    products: (Array.isArray(data) ? data : data?.products || []) as Product[],
+    loading,
+    error: error ? 'Lỗi tải sản phẩm liên quan' : null
+  };
 };

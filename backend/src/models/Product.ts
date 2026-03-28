@@ -23,7 +23,7 @@ export interface IProduct extends Document {
   }>;
   inStock: boolean;
   stock: number;
-  status: 'active' | 'inactive';
+  status: 'active' | 'inactive' | 'deleted';
   views: number;
   createdAt: Date;
   updatedAt: Date;
@@ -107,7 +107,7 @@ const productSchema = new Schema<IProduct>(
     },
     status: {
       type: String,
-      enum: ['active', 'inactive'],
+      enum: ['active', 'inactive', 'deleted'],
       default: 'active',
     },
     views: {
