@@ -32,6 +32,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         <Editor
             // Commenting out local script source to use default CDN or require explicit local config
             tinymceScriptSrc='/tinymce/tinymce.min.js'
+            apiKey="g5wga0u20mm5h6pajqis0966oyqdoj2cs75mkjbof62brstm"
             id={id}
             value={value}
             onEditorChange={(content) => onChange(content)}
