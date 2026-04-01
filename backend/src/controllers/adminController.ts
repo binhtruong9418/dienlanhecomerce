@@ -20,8 +20,8 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       recentQuotes,
       popularProducts,
     ] = await Promise.all([
-      Product.countDocuments(),
-      Category.countDocuments(),
+      Product.countDocuments({ status: { $ne: 'deleted' } }),
+      Category.countDocuments({ status: { $ne: 'deleted' } }),
       QuoteRequest.countDocuments(),
       QuoteRequest.countDocuments({ status: 'pending' }),
       QuoteRequest.countDocuments({ status: 'quoted' }),

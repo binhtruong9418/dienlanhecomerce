@@ -1,15 +1,8 @@
 version: "3"
 
-services:
-  mongodb:
-    image: mongo:latest
-    container_name: dienlanhe_mongodb
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
+# MongoDB is managed locally on the server (not in Docker)
 
+services:
   backend:
     build: ./backend
     restart: always
@@ -19,8 +12,8 @@ services:
       - ./backend/.env.production
     environment:
       - PORT=5000
-    depends_on:
-      - mongodb
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   frontend:
     build: ./frontend
@@ -44,6 +37,5 @@ services:
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 volumes:
-  mongodb_data:
   certbot_certs:
   certbot_www:

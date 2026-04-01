@@ -18,7 +18,6 @@ const productApi = {
     }
     try {
       const response = await axiosClient.get(`/products?${params.toString()}`);
-      console.log('getProducts response:', response);
       return response as ProductsResponse;
     } catch (error) {
       console.error('getProducts error:', error);
@@ -30,8 +29,6 @@ const productApi = {
   getProductBySlug: async (slug: string): Promise<Product> => {
     try {
       const response = await axiosClient.get(`/products/${slug}`);
-      console.log('getProductBySlug response:', response);
-      
       // API trả về { success: true, product: {...} }
       if (response && response.product) {
         return response.product;
@@ -58,8 +55,6 @@ const productApi = {
   getFeaturedProducts: async (limit: number = 6): Promise<Product[]> => {
     try {
       const response = await axiosClient.get(`/products/featured?limit=${limit}`);
-      console.log('getFeaturedProducts response:', response);
-      
       if (response && response.products) {
         return response.products;
       }
@@ -135,6 +130,17 @@ const productApi = {
     } catch (error) {
       console.error('updateProductStatus error:', error);
       throw error;
+    }
+  },
+
+  // Lấy filter options (categories with counts, power options) — server-side aggregation
+  getProductFilters: async (): Promise<{ categories: { _id: string; name: string; slug: string; count: number }[]; powerOptions: { value: string; label: string; count: number }[] }> => {
+    try {
+      const response = await axiosClient.get('/products/filters');
+      return response;
+    } catch (error) {
+      console.error('getProductFilters error:', error);
+      return { categories: [], powerOptions: [] };
     }
   },
 };

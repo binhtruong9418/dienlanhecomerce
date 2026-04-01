@@ -19,12 +19,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const initAuth = async () => {
-      console.log('Initializing auth...', { token: token ? 'exists' : 'none' });
-      
       if (token) {
         try {
           const userData = await adminApi.getCurrentUser();
-          console.log('User data loaded:', userData);
           setUser(userData);
         } catch (error) {
           console.error('Failed to load user:', error);
@@ -39,12 +36,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [token]);
 
   const login = async (credentials: LoginCredentials) => {
-    console.log('Logging in with:', credentials.email);
-    
     try {
       const response = await adminApi.login(credentials);
-      console.log('Login response:', response);
-      
+
       if (response.success && response.token) {
         localStorage.setItem('token', response.token);
         setToken(response.token);

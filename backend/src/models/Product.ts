@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IProduct extends Document {
   name: string;
   slug: string;
+  productModel: string;
   category: mongoose.Types.ObjectId;
   brand: string;
   power: string;
@@ -47,6 +48,11 @@ const productSchema = new Schema<IProduct>(
       type: Schema.Types.ObjectId,
       ref: 'Category',
       required: [true, 'Danh mục là bắt buộc'],
+    },
+    productModel: {
+      type: String,
+      default: '',
+      trim: true,
     },
     brand: {
       type: String,
@@ -120,7 +126,13 @@ const productSchema = new Schema<IProduct>(
   }
 );
 
-// Index for search
-productSchema.index({ name: 'text', description: 'text', brand: 'text' });
+// Text index for search
+productSchema.index({ name: 'text', description: 'text', brand: 'text', productModel: 'text' });
+// Compound indexes for common query patterns
+productSchema.index({ status: 1, category: 1 });
+productSchema.index({ status: 1, brand: 1 });
+productSchema.index({ status: 1, power: 1 });
+productSchema.index({ status: 1, price: 1 });
+productSchema.index({ status: 1, views: -1, createdAt: -1 });
 
 export default mongoose.model<IProduct>('Product', productSchema);
