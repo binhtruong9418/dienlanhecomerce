@@ -84,16 +84,17 @@ export function RequestsAdmin() {
                <div>SĐT: {selectedRequest.phone}</div>
                <div>Trạng thái: {getStatusLabel(selectedRequest.status)}</div>
              </div>
-             {selectedRequest.images?.length > 0 && (
+             {selectedRequest.files?.length > 0 && (
                 <div className="mb-4">
                   <p className="font-semibold mb-2">Ảnh đính kèm:</p>
                   <div className="grid grid-cols-3 gap-3">
-                    {selectedRequest.images.map((img: string, i: number) => (
+                    {selectedRequest.files.map((file, i) => (
                       <img
                         key={i}
-                        src={img}
+                        src={file.url}
+                        alt={file.name}
                         className="w-full h-32 object-cover rounded-lg border cursor-pointer hover:scale-105 transition"
-                        onClick={() => window.open(img, '_blank')}
+                        onClick={() => window.open(file.url, '_blank')}
                       />
                     ))}
                   </div>
