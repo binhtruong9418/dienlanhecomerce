@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Phone, Mail, CheckCircle, Zap, Maximize2, Award, Shield, Truck, HeadphonesIcon, Loader } from 'lucide-react';
 import { useProduct, useRelatedProducts } from '../hooks/useProducts';
+import { useSettings } from '../hooks/useSettings';
 import { Product } from '../types/product';
 import { handleImageError, getSafeImageUrl, FALLBACK_IMAGES } from '../utils/imageUtils';
 
@@ -36,7 +37,7 @@ export function ProductDetailPage({ onNavigate, productId }: ProductDetailPagePr
   const [selectedImage, setSelectedImage] = useState(0);
   const { product, loading, error } = useProduct(productId || '');
   const { products: relatedProducts } = useRelatedProducts(product?._id || '', 4);
-
+  const { companyInfo } = useSettings();
   if (loading) {
     return (
       <div className="min-h-screen bg-secondary-50 flex items-center justify-center">
@@ -205,7 +206,7 @@ export function ProductDetailPage({ onNavigate, productId }: ProductDetailPagePr
                     </div>
                     <div>
                       <p className="text-sm opacity-90">Hotline tư vấn</p>
-                      <p className="text-2xl font-bold">1900 xxxx</p>
+                      <p className="text-2xl font-bold">{companyInfo?.phone || '1900 xxxx'}</p>
                     </div>
                   </div>
                 </div>
