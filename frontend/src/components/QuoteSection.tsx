@@ -3,6 +3,7 @@ import { Send, Phone, Upload, X, FileText, Loader, CheckCircle } from 'lucide-re
 import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import quoteApi from '../api/quoteApi';
+import { useSettings } from '../hooks/useSettings';
 
 export function QuoteSection() {
   const [formData, setFormData] = useState({
@@ -19,7 +20,7 @@ export function QuoteSection() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const { companyInfo } = useSettings();
   const mutation = useMutation({
     mutationFn: (formDataToSend: FormData) => quoteApi.submitQuoteRequest(formDataToSend),
     onSuccess: () => {
@@ -156,7 +157,7 @@ export function QuoteSection() {
                   <Phone className="w-6 h-6" />
                   <div>
                     <p style={{ color: 'white' }} className="text-sm opacity-90">Hoặc gọi ngay</p>
-                    <p style={{ color: 'white' }} className="text-xl font-bold">1900 xxxx</p>
+                    <p style={{ color: 'white' }} className="text-xl font-bold">{companyInfo?.phone || '1900 xxxx'}</p>
                   </div>
                 </div>
               </div>

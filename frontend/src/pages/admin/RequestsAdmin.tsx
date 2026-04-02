@@ -84,6 +84,21 @@ export function RequestsAdmin() {
                <div>SĐT: {selectedRequest.phone}</div>
                <div>Trạng thái: {getStatusLabel(selectedRequest.status)}</div>
              </div>
+             {selectedRequest.images?.length > 0 && (
+                <div className="mb-4">
+                  <p className="font-semibold mb-2">Ảnh đính kèm:</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    {selectedRequest.images.map((img: string, i: number) => (
+                      <img
+                        key={i}
+                        src={img}
+                        className="w-full h-32 object-cover rounded-lg border cursor-pointer hover:scale-105 transition"
+                        onClick={() => window.open(img, '_blank')}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
              {selectedRequest.status === 'pending' && (
                 <div className="space-y-4 mb-4">
                   <input type="number" value={quotedPrice} onChange={e => setQuotedPrice(e.target.value)} placeholder="Nhập giá báo (VNĐ)" className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg" />
