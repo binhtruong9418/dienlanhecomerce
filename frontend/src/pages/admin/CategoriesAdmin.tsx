@@ -6,6 +6,7 @@ import { handleImageError, getSafeImageUrl, FALLBACK_IMAGES } from '../../utils/
 import { Category } from '../../types/category';
 import toast from 'react-hot-toast';
 import { generateSlug } from './utils';
+import adminApi from '../../api/adminApi';
 
 export function CategoriesAdmin() {
   const queryClient = useQueryClient();
@@ -15,6 +16,7 @@ export function CategoriesAdmin() {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [categoryForm, setCategoryForm] = useState<Partial<Category>>({});
+  const [uploading, setUploading] = useState(false);
 
   const { data: response, isLoading } = useQuery({
     queryKey: ['admin-categories'],
@@ -23,6 +25,21 @@ export function CategoriesAdmin() {
 
   const categories: Category[] = Array.isArray(response) ? response : (response?.categories || []);
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.[0]) return;
+    setUploading(true);
+    try {
+      const res = await adminApi.uploadFile(e.target.files[0], 'categories');
+      if (res.url) {
+        setCategoryForm(prev => ({ ...prev, image: res.url }));
+        toast.success('Upload ảnh thành công');
+      }
+    } catch {
+      toast.error('Lỗi upload ảnh');
+    } finally {
+      setUploading(false);
+    }
+  };
   const createMutation = useMutation({
     mutationFn: categoryApi.createCategory,
     onSuccess: () => {
@@ -186,6 +203,33 @@ export function CategoriesAdmin() {
             <div>
               <label className="block text-sm font-semibold mb-2">Mô tả</label>
               <textarea rows={3} value={categoryForm.description || ''} onChange={e => setCategoryForm({...categoryForm, description: e.target.value})} className="w-full px-4 py-3 border-2 border-secondary-200 rounded-lg" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-2">Ảnh danh mục</label>
+              <div className="border-2 border-dashed border-secondary-300 rounded-lg p-6 text-center bg-secondary-50">
+                <p className="text-sm">
+                  <label className="text-primary-600 font-semibold cursor-pointer">
+                    Chọn ảnh
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                </p>
+                {uploading && (<p className="text-sm text-primary-600 mt-2">Đang tải lên...</p>)}
+              </div>
+              {categoryForm.image && (
+                <div className="mt-4 relative w-32">
+                  <img
+                    src={getSafeImageUrl(categoryForm.image)}
+                    className="w-32 h-32 object-cover rounded-lg border"
+                    onError={(e) => handleImageError(e, FALLBACK_IMAGES.category)}
+                  />
+                  <button type="button" onClick={() => setCategoryForm(prev => ({ ...prev, image: '' }))} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"> ✕ </button>
+                </div>
+              )}
             </div>
             <div>
                <label className="block text-sm font-semibold mb-2">Thứ tự</label>
