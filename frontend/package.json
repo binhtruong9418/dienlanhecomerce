@@ -68,10 +68,7 @@
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build && npm run copy-tinymce:dist",
-    "copy-tinymce": "node scripts/copy-tinymce.js",
-    "copy-tinymce:dist": "node scripts/copy-tinymce-dist.js",
-    "preview": "vite preview",
-    "postinstall": "npm run copy-tinymce"
+    "build": "vite build",
+    "preview": "vite preview"
   }
 }
