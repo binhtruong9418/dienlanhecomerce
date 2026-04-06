@@ -16,6 +16,34 @@ export interface LoginResponse {
   };
 }
 
+export interface TimeseriesEntry {
+  date: string; // "2026-04-01"
+  quoteCount: number;
+  quotedCount: number;
+}
+
+export interface TimeseriesResponse {
+  timeseries: TimeseriesEntry[];
+  uniqueCustomers: number;
+}
+
+export interface Ga4Stats {
+  available: boolean;
+  sessionsToday?: number;
+  pageviewsToday?: number;
+  totalSessions7d?: number;
+  totalPageviews7d?: number;
+  totalUsers7d?: number;
+  newUsers7d?: number;
+  dailySessions?: { date: string; sessions: number; pageviews: number }[];
+  topPages?: { path: string; views: number }[];
+  trafficSources?: { channel: string; sessions: number }[];
+  deviceBreakdown?: { device: string; sessions: number }[];
+  topProductPages?: { path: string; name: string; views: number }[];
+  error?: string;
+  serviceAccountEmail?: string;
+}
+
 export interface DashboardStats {
   totalProducts: number;
   totalCategories: number;
@@ -34,10 +62,9 @@ export interface DashboardStats {
     createdAt: string;
   }>;
   popularProducts: Array<{
-    id: string;
+    _id: string;
     name: string;
     views: number;
-    quoteRequests: number;
   }>;
 }
 
@@ -46,10 +73,8 @@ const adminApi = {
   login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
     try {
       const response = await axiosClient.post('/auth/login', credentials);
-      console.log('Login response:', response);
       return response as LoginResponse;
     } catch (error) {
-      console.error('Login API error:', error);
       throw error;
     }
   },
@@ -62,15 +87,25 @@ const adminApi = {
   // Lấy thông tin user hiện tại
   getCurrentUser: async (): Promise<LoginResponse['user']> => {
     const response = await axiosClient.get('/auth/me');
-    console.log('Get current user response:', response);
     return response.user;
   },
 
   // Lấy thống kê dashboard
   getDashboardStats: async (): Promise<DashboardStats> => {
     const response = await axiosClient.get('/admin/stats');
-    console.log('Dashboard stats response:', response);
     return response.stats;
+  },
+
+  // Lấy thống kê theo ngày (timeseries)
+  getTimeseries: async (): Promise<TimeseriesResponse> => {
+    const response = await axiosClient.get('/admin/stats/timeseries');
+    return response as TimeseriesResponse;
+  },
+
+  // Lấy thống kê GA4
+  getGa4Stats: async (): Promise<{ ga4: Ga4Stats }> => {
+    const response = await axiosClient.get('/admin/stats/ga4');
+    return response as { ga4: Ga4Stats };
   },
 
   // Upload file
