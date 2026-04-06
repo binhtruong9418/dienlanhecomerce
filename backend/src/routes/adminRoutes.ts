@@ -6,6 +6,7 @@ import {
   getCompanyInfo,
   updateCompanyInfo,
 } from '../controllers/adminController';
+import { getTimeseries, getGa4Stats } from '../controllers/admin-stats-controller';
 import { protect, authorize } from '../middleware/auth';
 import { upload, uploadSingleToCloudinary, uploadMultipleToCloudinaryMiddleware } from '../middleware/upload';
 
@@ -16,6 +17,8 @@ router.use(protect);
 router.use(authorize('admin'));
 
 router.get('/stats', getDashboardStats);
+router.get('/stats/timeseries', getTimeseries);
+router.get('/stats/ga4', getGa4Stats);
 
 // Upload routes với middleware xử lý Cloudinary
 router.post('/upload', 

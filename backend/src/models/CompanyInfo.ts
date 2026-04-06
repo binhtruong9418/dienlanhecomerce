@@ -9,6 +9,11 @@ export interface ICompanyInfo extends Document {
   zaloLink: string;
   facebookLink: string;
   qrCodeUrl: string;
+  logoUrl: string;
+  bannerText: string;
+  bannerSubtext: string;
+  bannerImageUrl: string;
+  policyContent: string;
   updatedAt: Date;
 }
 
@@ -48,6 +53,26 @@ const companyInfoSchema = new Schema<ICompanyInfo>(
       default: '',
     },
     qrCodeUrl: {
+      type: String,
+      default: '',
+    },
+    logoUrl: {
+      type: String,
+      default: '',
+    },
+    bannerText: {
+      type: String,
+      default: '',
+    },
+    bannerSubtext: {
+      type: String,
+      default: '',
+    },
+    bannerImageUrl: {
+      type: String,
+      default: '',
+    },
+    policyContent: {
       type: String,
       default: '',
     },

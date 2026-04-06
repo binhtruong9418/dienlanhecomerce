@@ -1,4 +1,5 @@
 import { Phone, Mail, MapPin, Facebook, Youtube, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { handleImageError, getSafeImageUrl, FALLBACK_IMAGES } from '../utils/imageUtils';
 import { useSettings } from '../hooks/useSettings';
 import { QRCodeSVG } from 'qrcode.react';
@@ -57,29 +58,29 @@ export function Footer({ onNavigate }: FooterProps) {
             <h4 className="footer-title text-white font-semibold mb-4">Chính sách</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="hover:text-primary-400 transition-colors">
+                <Link to="/chinh-sach" className="hover:text-primary-400 transition-colors">
                   Chính sách bảo hành
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary-400 transition-colors">
+                <Link to="/chinh-sach" className="hover:text-primary-400 transition-colors">
                   Chính sách đổi trả
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary-400 transition-colors">
+                <Link to="/chinh-sach" className="hover:text-primary-400 transition-colors">
                   Chính sách vận chuyển
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary-400 transition-colors">
+                <Link to="/chinh-sach" className="hover:text-primary-400 transition-colors">
                   Điều khoản sử dụng
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary-400 transition-colors">
+                <Link to="/chinh-sach" className="hover:text-primary-400 transition-colors">
                   Bảo mật thông tin
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -148,14 +149,6 @@ export function Footer({ onNavigate }: FooterProps) {
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
             <p className="text-sm text-center">© {new Date().getFullYear()} {companyInfo?.companyName || 'DienlanhPRO'}. All rights reserved.</p>
-            {onNavigate && (
-              <button 
-                onClick={() => onNavigate('admin')} 
-                className="text-xs text-secondary-500 hover:text-primary-400 transition-colors"
-              >
-                Admin Login
-              </button>
-            )}
           </div>
         </div>
       </div>

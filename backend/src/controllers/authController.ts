@@ -9,13 +9,13 @@ const generateToken = (id: string): string => {
     if (!jwtSecret) {
       throw new Error('JWT_SECRET không được cấu hình');
     }
-  
+
     // Sử dụng expiresIn với kiểu dữ liệu phù hợp
     const expiresIn = process.env.JWT_EXPIRE || '7d';
-    
+
     return jwt.sign(
-      { id }, 
-      jwtSecret, 
+      { id },
+      jwtSecret,
       { expiresIn: expiresIn as jwt.SignOptions['expiresIn'] }
     );
   };
@@ -81,7 +81,7 @@ export const login = async (req: Request, res: Response) => {
 export const getCurrentUser = async (req: Request, res: Response) => {
   try {
     const user = await User.findById(req.user._id).select('-password');
-    
+
     res.json({
       success: true,
       user,
@@ -103,4 +103,62 @@ export const logout = async (req: Request, res: Response) => {
     success: true,
     message: 'Đăng xuất thành công',
   });
+};
+
+// @desc    Change password for authenticated user
+// @route   PUT /api/auth/change-password
+// @access  Private
+export const changePassword = async (req: Request, res: Response) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    // Validate required fields
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng nhập mật khẩu hiện tại và mật khẩu mới',
+      });
+    }
+
+    // Validate new password minimum length
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mật khẩu mới phải có ít nhất 8 ký tự',
+      });
+    }
+
+    // Fetch user with password field (excluded by default via select: false)
+    const user = await User.findById(req.user._id).select('+password');
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Không tìm thấy người dùng',
+      });
+    }
+
+    // Verify current password
+    const isCurrentPasswordValid = await user.comparePassword(currentPassword);
+    if (!isCurrentPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Mật khẩu hiện tại không chính xác',
+      });
+    }
+
+    // Assign new password — pre-save hook will hash it automatically
+    user.password = newPassword;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Đổi mật khẩu thành công',
+    });
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi server',
+    });
+  }
 };

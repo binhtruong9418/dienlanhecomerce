@@ -16,7 +16,7 @@ export function QuoteSection() {
     company: '', // Để trống
     address: '', // Để trống
   });
-  
+
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,13 +46,13 @@ export function QuoteSection() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.phone || formData.phone.trim() === '') {
       setError('Vui lòng nhập số điện thoại');
       return;
     }
     setError(null);
-    
+
     const formDataToSend = new FormData();
     formDataToSend.append('customerName', formData.customerName || 'Khách hàng');
     formDataToSend.append('phone', formData.phone);
@@ -66,7 +66,7 @@ export function QuoteSection() {
     uploadedFiles.forEach(file => {
       formDataToSend.append('files', file);
     });
-    
+
     mutation.mutate(formDataToSend);
   };
 
@@ -106,16 +106,18 @@ export function QuoteSection() {
 
       <div className="relative container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            {/* Info - giữ nguyên */}
+          {/* Grid: single column on mobile, two columns from md breakpoint */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            {/* Info panel */}
             <div className="text-white">
               <h2 style={{ color: 'white' }} className="mb-4">Yêu cầu báo giá</h2>
-              <p style={{ color: 'white' }} className="mb-6 text-lg">
+              <p style={{ color: 'white' }} className="mb-6 text-base sm:text-lg">
                 Để lại thông tin, chúng tôi sẽ tư vấn và báo giá chi tiết phù hợp với nhu cầu của bạn.
               </p>
-              
+
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
+                  {/* Icon container: flex-shrink-0 + explicit min-h-[44px] for touch target */}
                   <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -152,28 +154,28 @@ export function QuoteSection() {
                 </div>
               </div>
 
-              <div className="mt-8 p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+              <div className="mt-8 p-5 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
                 <div className="flex items-center gap-3">
-                  <Phone className="w-6 h-6" />
-                  <div>
+                  <Phone className="w-6 h-6 flex-shrink-0" />
+                  <div className="min-w-0">
                     <p style={{ color: 'white' }} className="text-sm opacity-90">Hoặc gọi ngay</p>
-                    <p style={{ color: 'white' }} className="text-xl font-bold">{companyInfo?.phone || '1900 xxxx'}</p>
+                    <p style={{ color: 'white' }} className="text-xl font-bold truncate">{companyInfo?.phone || '1900 xxxx'}</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Form */}
-            <div className="bg-white rounded-2xl p-8 shadow-2xl">
+            {/* Form card — reduced padding on mobile to avoid overflow at 320px */}
+            <div className="bg-white rounded-2xl p-5 sm:p-8 shadow-2xl">
               {success && (
-                <div className="mb-4 p-4 bg-green-50 text-green-600 rounded-lg border border-green-200 flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5" />
-                  <span>Gửi yêu cầu thành công! Chúng tôi sẽ liên hệ lại trong 24h.</span>
+                <div className="mb-4 p-4 bg-green-50 text-green-600 rounded-lg border border-green-200 flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">Gửi yêu cầu thành công! Chúng tôi sẽ liên hệ lại trong 24h.</span>
                 </div>
               )}
-              
+
               {error && (
-                <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-lg border border-red-200">
+                <div className="mb-4 p-4 bg-red-50 text-red-600 rounded-lg border border-red-200 text-sm">
                   {error}
                 </div>
               )}
@@ -244,12 +246,12 @@ export function QuoteSection() {
                   />
                 </div>
 
-                {/* File Upload */}
+                {/* File Upload — stacked on mobile to prevent horizontal overflow */}
                 <div>
                   <label className="block text-sm font-semibold text-secondary-700 mb-2">
                     Tệp đính kèm (không bắt buộc)
                   </label>
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-col gap-3">
                     <input
                       type="file"
                       name="files"
@@ -259,39 +261,44 @@ export function QuoteSection() {
                       id="fileInput"
                       disabled={isLoading}
                     />
+                    {/* Upload button: min-h-[44px] ensures touch target */}
                     <label
                       htmlFor="fileInput"
-                      className={`bg-primary-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-primary-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 cursor-pointer ${
+                      className={`w-full sm:w-auto self-start bg-primary-600 text-white min-h-[44px] py-2 px-4 rounded-lg font-semibold hover:bg-primary-700 transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer ${
                         isLoading ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
                     >
                       <Upload className="w-5 h-5" />
                       Tải lên
                     </label>
-                    <div className="flex flex-wrap gap-2">
-                      {uploadedFiles.map((file, index) => (
-                        <div key={index} className="bg-gray-100 px-3 py-2 rounded-lg flex items-center gap-2">
-                          <FileText className="w-4 h-4" />
-                          <span className="text-sm truncate max-w-[150px]">{file.name}</span>
-                          {!isLoading && (
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveFile(index)}
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                    {/* File list: wraps naturally, each file tag truncates long names */}
+                    {uploadedFiles.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {uploadedFiles.map((file, index) => (
+                          <div key={index} className="bg-gray-100 px-3 py-2 rounded-lg flex items-center gap-2 max-w-full">
+                            <FileText className="w-4 h-4 flex-shrink-0" />
+                            <span className="text-sm truncate max-w-[120px] sm:max-w-[150px]">{file.name}</span>
+                            {!isLoading && (
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveFile(index)}
+                                className="text-red-500 hover:text-red-700 flex-shrink-0 min-w-[24px] min-h-[24px] flex items-center justify-center"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
+                {/* Submit button: always full-width, min-h for touch target */}
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-primary-600 text-white py-4 rounded-lg font-semibold hover:bg-primary-700 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-primary-600 text-white min-h-[48px] py-4 rounded-lg font-semibold hover:bg-primary-700 transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
                     <>

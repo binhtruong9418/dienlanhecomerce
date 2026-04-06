@@ -1,4 +1,4 @@
-import { ArrowRight, Snowflake, Award, Truck } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export function Hero() {
   return (
@@ -16,22 +16,25 @@ export function Hero() {
 
       {/* Content Overlay */}
       <div className="relative container mx-auto px-4 py-20 md:py-32 min-h-screen flex items-center">
-        <div className="max-w-3xl">
-          <div className="inline-block bg-white/25 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium mb-6 shadow-lg" style={{ color: '#ffffff' }}>
+        <div className="max-w-3xl w-full">
+          {/* Badge pill — whitespace-nowrap prevents awkward wrapping on narrow screens */}
+          <div className="inline-block bg-white/25 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium mb-6 shadow-lg whitespace-nowrap" style={{ color: '#ffffff' }}>
             🏭 Giải pháp làm mát công nghiệp
           </div>
-          
-          <h1 className="text-5xl md:text-6xl lg:text-7xl mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" style={{ color: '#ffffff' }}>
+
+          {/* Heading: scale down from 3xl on mobile to 7xl on large screens */}
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" style={{ color: '#ffffff' }}>
             Giải pháp làm mát<br />
             <span style={{ color: '#ffffff' }}>công nghiệp hiệu quả</span>
           </h1>
-          
-          <p className="text-xl md:text-2xl mb-8 leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style={{ color: '#ffffff' }}>
-            Cung cấp điều hòa cây và quạt điều hòa chất lượng cao cho nhà xưởng, văn phòng và không gian thương mại. 
+
+          {/* Body copy: base size on mobile avoids overflow at 320px */}
+          <p className="text-base sm:text-xl md:text-2xl mb-8 leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style={{ color: '#ffffff' }}>
+            Cung cấp điều hòa cây và quạt điều hòa chất lượng cao cho nhà xưởng, văn phòng và không gian thương mại.
             Công suất lớn, tiết kiệm điện, bảo hành chính hãng.
           </p>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons — already responsive */}
           <div className="flex flex-col sm:flex-row gap-4">
             <a href="#products" className="bg-white text-primary-700 px-8 py-4 rounded-lg font-semibold hover:bg-primary-50 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2">
               Xem sản phẩm
@@ -42,9 +45,9 @@ export function Hero() {
             </a>
           </div>
 
-          {/* Stats Card */}
-          <div className="mt-12 inline-block bg-white text-secondary-800 p-6 rounded-xl shadow-2xl">
-            <div className="text-4xl font-bold text-primary-600">500+</div>
+          {/* Stats Card — full-width on mobile so it doesn't clip at 320px */}
+          <div className="mt-12 w-full sm:w-auto sm:inline-block bg-white text-secondary-800 p-4 sm:p-6 rounded-xl shadow-2xl">
+            <div className="text-3xl sm:text-4xl font-bold text-primary-600">500+</div>
             <div className="text-sm text-secondary-600">Dự án hoàn thành</div>
           </div>
         </div>

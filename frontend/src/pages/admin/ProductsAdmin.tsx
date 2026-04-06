@@ -1,20 +1,18 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search, Eye, EyeOff, Edit, Trash2, Package } from 'lucide-react';
 import productApi from '../../api/productApi';
 import categoryApi from '../../api/categoryApi';
 import { handleImageError, getSafeImageUrl, FALLBACK_IMAGES } from '../../utils/imageUtils';
-import { Product } from '../../types/product';
 import { Category } from '../../types/category';
-import { ProductFormModal } from '../../components/admin/product-form-modal';
 import toast from 'react-hot-toast';
 
 export function ProductsAdmin() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all'|'active'|'inactive'|'deleted'>('all');
-  const [showModal, setShowModal] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   const { data: response, isLoading } = useQuery({
     queryKey: ['admin-products'],
@@ -22,22 +20,10 @@ export function ProductsAdmin() {
   });
   const products = response?.products || [];
 
-  const { data: categoriesResult } = useQuery({
+  // Keep categories loaded so ProductFormPage query cache is warm
+  useQuery({
     queryKey: ['admin-categories'],
     queryFn: () => categoryApi.getCategories({ status: 'all' })
-  });
-  const categories = Array.isArray(categoriesResult) ? categoriesResult : (categoriesResult?.categories || []);
-
-  const createMutation = useMutation({
-    mutationFn: productApi.createProduct,
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin-products'] }); toast.success('Thêm sản phẩm thành công'); setShowModal(false); },
-    onError: () => toast.error('Lỗi khi thêm sản phẩm')
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: (data: Partial<Product>) => productApi.updateProduct(editingProduct!._id, data),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin-products'] }); toast.success('Cập nhật sản phẩm thành công'); setShowModal(false); },
-    onError: () => toast.error('Lỗi khi cập nhật sản phẩm')
   });
 
   const deleteMutation = useMutation({
@@ -50,11 +36,6 @@ export function ProductsAdmin() {
     mutationFn: ({ id, status }: { id: string; status: 'active' | 'inactive' | 'deleted' }) => productApi.updateProductStatus(id, status),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['admin-products'] }); toast.success('Cập nhật trạng thái thành công'); }
   });
-
-  const handleSave = (data: Partial<Product>) => {
-    if (editingProduct) updateMutation.mutate(data);
-    else createMutation.mutate(data);
-  };
 
   const filteredProducts = products.filter(p => {
     const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -70,7 +51,7 @@ export function ProductsAdmin() {
           <p className="text-sm text-secondary-600">Thêm, sửa, xóa sản phẩm</p>
         </div>
         <button
-          onClick={() => { setEditingProduct(null); setShowModal(true); }}
+          onClick={() => navigate('/admin/products/new')}
           className="flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700"
         >
           <Plus className="w-5 h-5" />
@@ -127,13 +108,19 @@ export function ProductsAdmin() {
                     />
                   </td>
                   <td className="py-4 px-6 font-semibold max-w-xs">{product.name}</td>
-                  <td className="py-4 px-6"><span className="inline-flex px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">{(product.category && typeof product.category === 'object') ? (product.category as Category).name : 'N/A'}</span></td>
+                  <td className="py-4 px-6">
+                    <span className="inline-flex px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                      {(product.category && typeof product.category === 'object') ? (product.category as Category).name : 'N/A'}
+                    </span>
+                  </td>
                   <td className="py-4 px-6">{product.power}</td>
                   <td className="py-4 px-6">{product.price.toLocaleString('vi-VN')}đ</td>
                   <td className="py-4 px-6">{product.stock}</td>
                   <td className="py-4 px-6">
                     {product.status === 'deleted' ? (
-                      <span className="inline-flex items-center gap-2 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm"><Trash2 className="w-4 h-4" /> Đã xóa</span>
+                      <span className="inline-flex items-center gap-2 px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm">
+                        <Trash2 className="w-4 h-4" /> Đã xóa
+                      </span>
                     ) : (
                       <button
                         onClick={() => statusMutation.mutate({ id: product._id, status: product.status === 'active' ? 'inactive' : 'active' })}
@@ -149,8 +136,18 @@ export function ProductsAdmin() {
                   </td>
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-2">
-                       <button onClick={() => { setEditingProduct(product); setShowModal(true); }} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><Edit className="w-5 h-5"/></button>
-                       <button onClick={() => { if(confirm('Chắc chắn xóa?')) deleteMutation.mutate(product._id); }} className="p-2 text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-5 h-5"/></button>
+                      <button
+                        onClick={() => navigate(`/admin/products/${product._id}/edit`)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                      >
+                        <Edit className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => { if (confirm('Chắc chắn xóa?')) deleteMutation.mutate(product._id); }}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -159,21 +156,12 @@ export function ProductsAdmin() {
           </table>
           {filteredProducts.length === 0 && (
             <div className="py-12 text-center text-secondary-500">
-               <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
-               <p>Không có sản phẩm nào</p>
+              <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
+              <p>Không có sản phẩm nào</p>
             </div>
           )}
         </div>
       )}
-
-      <ProductFormModal
-        isOpen={showModal}
-        editingProduct={editingProduct}
-        categories={categories}
-        isSaving={createMutation.isPending || updateMutation.isPending}
-        onClose={() => setShowModal(false)}
-        onSave={handleSave}
-      />
     </main>
   );
 }
