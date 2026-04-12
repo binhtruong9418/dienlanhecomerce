@@ -8,6 +8,7 @@ import { HomePage } from './pages/HomePage';
 import { ProductListPage } from './pages/ProductListPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { PolicyPage } from './pages/PolicyPage';
+import { QuotePage } from './pages/QuotePage';
 
 // Admin Pages and Layout
 import { AdminLayout } from './layouts/AdminLayout';
@@ -56,6 +57,7 @@ export default function App() {
                 <Route path="/products/:categorySlug" element={<ProductsPageWrapper />} />
                 <Route path="/product/:slug" element={<ProductDetailWrapper />} />
                 <Route path="/chinh-sach" element={<PolicyPage />} />
+                <Route path="/quote" element={<QuotePage />} />
               </Route>
 
               {/* Admin Routes with React Query and React Router Outlet Component */}

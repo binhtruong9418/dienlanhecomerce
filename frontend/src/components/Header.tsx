@@ -1,6 +1,6 @@
 import { Menu, Phone, X } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSettings } from '../hooks/useSettings';
 import { getSafeImageUrl } from '../utils/imageUtils';
 import { HeaderSearchBox } from './header-search-box';
@@ -12,6 +12,8 @@ interface HeaderProps {
 export function Header({ onNavigate }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { companyInfo } = useSettings();
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   const handleHomeClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -27,9 +29,13 @@ export function Header({ onNavigate }: HeaderProps) {
 
   const handleQuoteClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    onNavigate?.('home');
-    setTimeout(() => document.getElementById('quote')?.scrollIntoView({ behavior: 'smooth' }), 100);
     setMobileMenuOpen(false);
+    if (isHomePage) {
+      // Đang ở trang home → scroll đến section #quote
+      document.getElementById('quote')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/quote');
+    }
   };
 
   return (
@@ -57,7 +63,7 @@ export function Header({ onNavigate }: HeaderProps) {
             <a href="#products" onClick={handleProductsClick} className="text-secondary-700 hover:text-primary-600 font-medium transition-colors">
               Sản phẩm
             </a>
-            <a href="#quote" onClick={handleQuoteClick} className="text-secondary-700 hover:text-primary-600 font-medium transition-colors">
+            <a href="/quote" onClick={handleQuoteClick} className="text-secondary-700 hover:text-primary-600 font-medium transition-colors">
               Yêu cầu báo giá
             </a>
             <HeaderSearchBox className="w-64 xl:w-80" inputClassName="w-full" />
@@ -86,7 +92,7 @@ export function Header({ onNavigate }: HeaderProps) {
             <a href="#products" onClick={handleProductsClick} className="text-secondary-700 hover:text-primary-600 font-medium transition-colors py-2">
               Sản phẩm
             </a>
-            <a href="#quote" onClick={handleQuoteClick} className="text-secondary-700 hover:text-primary-600 font-medium transition-colors py-2">
+            <a href="/quote" onClick={handleQuoteClick} className="text-secondary-700 hover:text-primary-600 font-medium transition-colors py-2">
               Yêu cầu báo giá
             </a>
             <div className="flex items-center gap-3 bg-primary-600 text-white px-4 py-3 rounded-lg mt-2">

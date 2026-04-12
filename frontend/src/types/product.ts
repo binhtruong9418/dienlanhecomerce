@@ -31,6 +31,13 @@ export interface Product {
   stock: number;
   status: 'active' | 'inactive' | 'deleted';
   views: number;
+  fieldVisibility?: {
+    brand: boolean;
+    model: boolean;
+    power: boolean;
+    capacity: boolean;
+    area: boolean;
+  };
   createdAt: string;
   updatedAt: string;
 }

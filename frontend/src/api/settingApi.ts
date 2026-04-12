@@ -14,6 +14,7 @@ export interface CompanyInfo {
   bannerText?: string;
   bannerSubtext?: string;
   bannerImageUrl?: string;
+  quoteBannerImageUrl?: string;
   policyContent?: string;
   updatedAt?: string;
 }
@@ -48,6 +49,7 @@ const settingApi = {
         bannerText: '',
         bannerSubtext: '',
         bannerImageUrl: '',
+        quoteBannerImageUrl: '',
         policyContent: '',
       };
     }

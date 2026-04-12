@@ -24,7 +24,9 @@ export function useCompatNavigation() {
           else if (productId) navigate(`/product/${productId}`);
           else navigate('/products');
           break;
-        case 'quote-request': navigate('/#quote-request'); break;
+        case 'quote-request':
+          navigate('/quote', { state: { productName, productId } });
+          break;
         case 'admin': navigate('/admin'); break;
         default: navigate('/');
       }

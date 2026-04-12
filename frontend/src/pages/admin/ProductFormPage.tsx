@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Upload, Trash2, X, ChevronRight } from 'lucide-react';
+import { Plus, Upload, Trash2, X, ChevronRight, Eye } from 'lucide-react';
 import productApi from '../../api/productApi';
 import categoryApi from '../../api/categoryApi';
 import adminApi from '../../api/adminApi';
@@ -12,13 +12,26 @@ import { Product } from '../../types/product';
 import { Category } from '../../types/category';
 import toast from 'react-hot-toast';
 import { useImageCrop, validateImageFile } from '../../hooks/use-image-crop';
+import { Switch } from '../../components/ui/switch';
+
+const DEFAULT_FIELD_VISIBILITY = { brand: true, model: true, power: true, capacity: true, area: true };
 
 const EMPTY_FORM: Partial<Product> = {
   name: '', brand: '', productModel: '', power: '',
   capacity: '', area: '', price: 0, originalPrice: 0,
   images: [], description: '', specifications: [], features: [],
   inStock: true, stock: 0, status: 'active',
+  fieldVisibility: { ...DEFAULT_FIELD_VISIBILITY },
 };
+
+// Visibility field definitions
+const VISIBILITY_FIELDS: { key: keyof typeof DEFAULT_FIELD_VISIBILITY; label: string }[] = [
+  { key: 'brand',    label: 'Thương hiệu' },
+  { key: 'model',    label: 'Model'        },
+  { key: 'power',    label: 'Công suất'   },
+  { key: 'capacity', label: 'Năng lực'    },
+  { key: 'area',     label: 'Diện tích'   },
+];
 
 export function ProductFormPage() {
   const { id } = useParams<{ id: string }>();
@@ -317,6 +330,44 @@ export function ProductFormPage() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Field Visibility */}
+        <div className="bg-white rounded-xl border border-secondary-200 p-6">
+          <div className="flex items-center gap-2 mb-1">
+            <Eye className="w-4 h-4 text-secondary-500" />
+            <label className="text-base font-semibold">Hiển thị trên trang sản phẩm</label>
+          </div>
+          <p className="text-xs text-secondary-400 mb-4">Chọn các trường thông tin hiển thị với khách hàng</p>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {VISIBILITY_FIELDS.map(({ key, label }) => {
+              const isOn = form.fieldVisibility?.[key] ?? true;
+              const toggle = () =>
+                setForm(p => ({
+                  ...p,
+                  fieldVisibility: { ...DEFAULT_FIELD_VISIBILITY, ...p.fieldVisibility, [key]: !(p.fieldVisibility?.[key] ?? true) },
+                }));
+              return (
+                <div
+                  key={key}
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl border cursor-pointer transition-colors ${
+                    isOn ? 'border-primary-200 bg-primary-50/60' : 'border-secondary-200 bg-secondary-50'
+                  }`}
+                  onClick={toggle}
+                >
+                  <span className={`text-sm font-medium ${isOn ? 'text-secondary-900' : 'text-secondary-400'}`}>
+                    {label}
+                  </span>
+                  <Switch
+                    checked={isOn}
+                    onCheckedChange={toggle}
+                    onClick={e => e.stopPropagation()}
+                    className="data-[state=checked]:bg-primary-600 data-[state=unchecked]:bg-secondary-200 h-5 w-9"
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Actions */}

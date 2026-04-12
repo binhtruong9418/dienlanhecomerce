@@ -13,6 +13,7 @@ export interface ICompanyInfo extends Document {
   bannerText: string;
   bannerSubtext: string;
   bannerImageUrl: string;
+  quoteBannerImageUrl: string;
   policyContent: string;
   updatedAt: Date;
 }
@@ -62,15 +63,19 @@ const companyInfoSchema = new Schema<ICompanyInfo>(
     },
     bannerText: {
       type: String,
-      default: '',
+      default: 'Giải pháp làm mát công nghiệp hiệu quả',
     },
     bannerSubtext: {
       type: String,
-      default: '',
+      default: 'Cung cấp điều hòa cây và quạt điều hòa chất lượng cao cho nhà xưởng, văn phòng và không gian thương mại. Công suất lớn, tiết kiệm điện, bảo hành chính hãng.',
     },
     bannerImageUrl: {
       type: String,
-      default: '',
+      default: 'https://images.unsplash.com/photo-1766788467067-d443f19314b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwYWlyJTIwY29uZGl0aW9uZXIlMjBmYWN0b3J5fGVufDF8fHx8MTc2ODM2MDM5MXww&ixlib=rb-4.1.0&q=80&w=1080',
+    },
+    quoteBannerImageUrl: {
+      type: String,
+      default: 'https://images.unsplash.com/photo-1702498286150-e6f1cd70fa3f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMG9mZmljZSUyMGJ1aWxkaW5nJTIwbW9kZXJuJTIwZ2xhc3N8ZW58MXx8fHwxNzcwNzM2OTE3fDA&ixlib=rb-4.1.0&q=80&w=1080',
     },
     policyContent: {
       type: String,

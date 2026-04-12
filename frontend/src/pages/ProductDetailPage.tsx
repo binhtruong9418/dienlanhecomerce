@@ -68,9 +68,18 @@ export function ProductDetailPage({ onNavigate, productId }: ProductDetailPagePr
   }
 
   // Lấy tên category
-  const categoryName = typeof product.category === 'object' 
-    ? product.category.name 
+  const categoryName = typeof product.category === 'object'
+    ? product.category.name
     : product.category;
+
+  // Per-product visibility config set by admin; defaults to shown if not set
+  const vis = {
+    brand:    product.fieldVisibility?.brand    ?? true,
+    model:    product.fieldVisibility?.model    ?? true,
+    power:    product.fieldVisibility?.power    ?? true,
+    capacity: product.fieldVisibility?.capacity ?? true,
+    area:     product.fieldVisibility?.area     ?? true,
+  };
 
   return (
     <div className="min-h-screen bg-secondary-50">
@@ -148,34 +157,53 @@ export function ProductDetailPage({ onNavigate, productId }: ProductDetailPagePr
               <h1 className="text-2xl md:text-3xl font-bold text-secondary-900 mb-4">{product.name}</h1>
 
               {/* Brand & Model */}
-              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-secondary-200">
-                <div>
-                  <span className="text-sm text-secondary-600">Thương hiệu:</span>
-                  <p className="font-semibold text-primary-600">{product.brand}</p>
+              {(vis.brand || vis.model) && (
+                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-secondary-200">
+                  {vis.brand && (
+                    <div>
+                      <span className="text-sm text-secondary-600">Thương hiệu:</span>
+                      <p className="font-semibold text-primary-600">{product.brand}</p>
+                    </div>
+                  )}
+                  {vis.brand && vis.model && <div className="h-8 w-px bg-secondary-300" />}
+                  {vis.model && (
+                    <div>
+                      <span className="text-sm text-secondary-600">Model:</span>
+                      <p className="font-semibold">{product.productModel}</p>
+                    </div>
+                  )}
                 </div>
-                <div className="h-8 w-px bg-secondary-300"></div>
-                <div>
-                  <span className="text-sm text-secondary-600">Model:</span>
-                  <p className="font-semibold">{product.productModel}</p>
-                </div>
-              </div>
+              )}
 
               {/* Quick Specs */}
               <div className="space-y-3 mb-6 pb-6 border-b border-secondary-200">
-                <div className="flex justify-between items-center">
-                  <span className="text-secondary-600 flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-primary-600" />
-                    Công suất:
-                  </span>
-                  <span className="font-bold text-lg">{product.power}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-secondary-600 flex items-center gap-2">
-                    <Maximize2 className="w-5 h-5 text-primary-600" />
-                    Diện tích làm mát:
-                  </span>
-                  <span className="font-bold text-lg">{product.area}</span>
-                </div>
+                {vis.power && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-secondary-600 flex items-center gap-2">
+                      <Zap className="w-5 h-5 text-primary-600" />
+                      Công suất:
+                    </span>
+                    <span className="font-bold text-lg">{product.power}</span>
+                  </div>
+                )}
+                {vis.capacity && product.capacity && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-secondary-600 flex items-center gap-2">
+                      <Zap className="w-5 h-5 text-primary-600" />
+                      Năng lực:
+                    </span>
+                    <span className="font-bold text-lg">{product.capacity}</span>
+                  </div>
+                )}
+                {vis.area && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-secondary-600 flex items-center gap-2">
+                      <Maximize2 className="w-5 h-5 text-primary-600" />
+                      Diện tích làm mát:
+                    </span>
+                    <span className="font-bold text-lg">{product.area}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center">
                   <span className="text-secondary-600">Giá tham khảo:</span>
                   <span className="font-bold text-lg text-primary-600">
@@ -315,8 +343,8 @@ export function ProductDetailPage({ onNavigate, productId }: ProductDetailPagePr
                   <div className="p-4">
                     <h4 className="font-semibold text-secondary-900 mb-2 line-clamp-2 min-h-[3rem]">{relatedProduct.name}</h4>
                     <div className="text-sm text-secondary-600 space-y-1">
-                      <p>Công suất: <span className="font-semibold">{relatedProduct.power}</span></p>
-                      <p>Năng lực: <span className="font-semibold">{relatedProduct.capacity}</span></p>
+                      {(relatedProduct.fieldVisibility?.power    ?? true) && <p>Công suất: <span className="font-semibold">{relatedProduct.power}</span></p>}
+                      {(relatedProduct.fieldVisibility?.capacity ?? true) && relatedProduct.capacity && <p>Năng lực: <span className="font-semibold">{relatedProduct.capacity}</span></p>}
                     </div>
                   </div>
                 </div>

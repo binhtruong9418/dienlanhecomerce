@@ -53,16 +53,16 @@ export function FeaturedProducts({ onNavigate, onProductSelect }: FeaturedProduc
               className="bg-white rounded-xl overflow-hidden border border-secondary-200 hover:border-primary-500 hover:shadow-xl transition-all group cursor-pointer"
               onClick={() => onProductSelect?.(product)}
             >
-              {/* Image */}
-              <div className="relative h-56 bg-secondary-100 overflow-hidden">
+              {/* Image — aspect-[4/3] + object-contain để hiện toàn bộ ảnh sản phẩm */}
+              <div className="relative aspect-[4/3] bg-secondary-50 overflow-hidden">
                 <img
                   src={getSafeImageUrl(product.images?.[0])}
                   alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
                   onError={(e) => handleImageError(e, FALLBACK_IMAGES.product)}
                 />
                 {!product.inStock && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                     <span className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold">
                       Hết hàng
                     </span>
@@ -71,19 +71,20 @@ export function FeaturedProducts({ onNavigate, onProductSelect }: FeaturedProduc
               </div>
 
               {/* Content */}
-              <div className="p-5">
-                <h3 className="mb-3 line-clamp-2 min-h-[3.5rem]">{product.name}</h3>
+              <div className="p-5 flex flex-col gap-3">
+                <h3 className="text-base font-semibold text-secondary-900 line-clamp-2 min-h-[3rem] leading-snug">
+                  {product.name}
+                </h3>
 
-                {/* Specs */}
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-secondary-600">Công suất:</span>
-                    <span className="font-semibold text-secondary-800">{product.power || 'Đang cập nhật'}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-secondary-600">Năng lực:</span>
-                    <span className="font-semibold text-secondary-800">{product.capacity || 'Đang cập nhật'}</span>
-                  </div>
+                {/* Price */}
+                <div>
+                  {product.price > 0 ? (
+                    <span className="text-xl font-bold text-primary-600">
+                      {product.price.toLocaleString('vi-VN')}đ
+                    </span>
+                  ) : (
+                    <span className="text-sm italic text-secondary-500">Liên hệ để báo giá</span>
+                  )}
                 </div>
 
                 {/* Button */}

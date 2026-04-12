@@ -26,6 +26,13 @@ export interface IProduct extends Document {
   stock: number;
   status: 'active' | 'inactive' | 'deleted';
   views: number;
+  fieldVisibility: {
+    brand: boolean;
+    model: boolean;
+    power: boolean;
+    capacity: boolean;
+    area: boolean;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -119,6 +126,13 @@ const productSchema = new Schema<IProduct>(
     views: {
       type: Number,
       default: 0,
+    },
+    fieldVisibility: {
+      brand:    { type: Boolean, default: true },
+      model:    { type: Boolean, default: true },
+      power:    { type: Boolean, default: true },
+      capacity: { type: Boolean, default: true },
+      area:     { type: Boolean, default: true },
     },
   },
   {

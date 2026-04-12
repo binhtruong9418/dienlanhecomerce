@@ -96,8 +96,8 @@ export function QuoteSection() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src="https://images.unsplash.com/photo-1702498286150-e6f1cd70fa3f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMG9mZmljZSUyMGJ1aWxkaW5nJTIwbW9kZXJuJTIwZ2xhc3N8ZW58MXx8fHwxNzcwNzM2OTE3fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-          alt="Modern office building"
+          src={companyInfo?.quoteBannerImageUrl || 'https://images.unsplash.com/photo-1702498286150-e6f1cd70fa3f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMG9mZmljZSUyMGJ1aWxkaW5nJTIwbW9kZXJuJTIwZ2xhc3N8ZW58MXx8fHwxNzcwNzM2OTE3fDA&ixlib=rb-4.1.0&q=80&w=1080'}
+          alt="Banner báo giá"
           className="w-full h-full object-cover"
         />
         {/* Gradient Overlay - Black with transparency */}
