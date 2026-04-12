@@ -1,4 +1,6 @@
-// Filter section: price range presets + manual input
+// Filter section: price range presets + dual-thumb slider (react-slider)
+import ReactSlider from 'react-slider';
+
 const PRICE_PRESETS = [
   { id: 'under-5', label: 'Dưới 5 triệu', min: 0, max: 5000000 },
   { id: '5-10', label: '5 - 10 triệu', min: 5000000, max: 10000000 },
@@ -9,19 +11,30 @@ const PRICE_PRESETS = [
 
 export { PRICE_PRESETS };
 
+const SLIDER_MIN = 0;
+const SLIDER_MAX = 50000000;
+const SLIDER_STEP = 500000;
+
+const formatVnd = (value: number) =>
+  new Intl.NumberFormat('vi-VN').format(value) + 'đ';
+
 interface FilterPriceSectionProps {
   priceRange: { min: string; max: string };
   selectedPreset: string;
   onPresetChange: (presetId: string) => void;
-  onInputChange: (type: 'min' | 'max', value: string) => void;
+  onRangeChange: (min: number, max: number) => void;
 }
 
 export function FilterPriceSection({
   priceRange,
   selectedPreset,
   onPresetChange,
-  onInputChange,
+  onRangeChange,
 }: FilterPriceSectionProps) {
+  const minValue = priceRange.min ? Math.min(Number(priceRange.min), SLIDER_MAX) : SLIDER_MIN;
+  const maxRaw = priceRange.max ? Number(priceRange.max) : SLIDER_MAX;
+  const maxValue = Math.min(maxRaw, SLIDER_MAX);
+
   return (
     <div>
       <h4 className="font-semibold mb-3 text-secondary-900">Khoảng giá</h4>
@@ -48,26 +61,24 @@ export function FilterPriceSection({
         ))}
       </div>
 
-      <div className="mt-3">
-        <p className="text-sm text-secondary-600 mb-2">Hoặc nhập khoảng giá</p>
-        <div className="flex items-center gap-2">
-          <input
-            type="number"
-            placeholder="Từ"
-            value={priceRange.min}
-            onChange={e => onInputChange('min', e.target.value)}
-            className="w-1/2 px-3 py-2 border border-secondary-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-            min="0"
-          />
-          <span className="text-secondary-400">-</span>
-          <input
-            type="number"
-            placeholder="Đến"
-            value={priceRange.max}
-            onChange={e => onInputChange('max', e.target.value)}
-            className="w-1/2 px-3 py-2 border border-secondary-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
-            min="0"
-          />
+      <div className="mt-4">
+        <p className="text-sm text-secondary-600 mb-3">Hoặc chọn khoảng giá</p>
+        <ReactSlider
+          className="price-slider"
+          thumbClassName="price-slider-thumb"
+          trackClassName="price-slider-track"
+          min={SLIDER_MIN}
+          max={SLIDER_MAX}
+          step={SLIDER_STEP}
+          value={[minValue, maxValue]}
+          onChange={([min, max]) => onRangeChange(min, max)}
+          pearling
+          minDistance={SLIDER_STEP}
+          ariaLabel={['Giá tối thiểu', 'Giá tối đa']}
+        />
+        <div className="flex justify-between text-sm text-secondary-700 font-medium mt-3">
+          <span>{formatVnd(minValue)}</span>
+          <span>{formatVnd(maxValue)}</span>
         </div>
       </div>
     </div>

@@ -80,14 +80,13 @@ export function FilterSidebar({
     onFilterChange?.({ ...filters, priceMin: preset.min, priceMax: preset.max === 999999999 ? undefined : preset.max });
   };
 
-  const handlePriceInputChange = (type: 'min' | 'max', value: string) => {
-    const newRange = { ...priceRange, [type]: value };
-    setPriceRange(newRange);
+  const handlePriceRangeChange = (min: number, max: number) => {
+    setPriceRange({ min: min.toString(), max: max.toString() });
     setSelectedPricePreset('');
     onFilterChange?.({
       ...filters,
-      priceMin: type === 'min' ? (value || undefined) : (priceRange.min || undefined),
-      priceMax: type === 'max' ? (value || undefined) : (priceRange.max || undefined),
+      priceMin: min > 0 ? min : undefined,
+      priceMax: max,
     });
   };
 
@@ -131,7 +130,7 @@ export function FilterSidebar({
           priceRange={priceRange}
           selectedPreset={selectedPricePreset}
           onPresetChange={handlePricePresetChange}
-          onInputChange={handlePriceInputChange}
+          onRangeChange={handlePriceRangeChange}
         />
 
         <div className="pt-4 space-y-3">
