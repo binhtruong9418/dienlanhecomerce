@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Upload, Trash2, X, ChevronRight, Eye } from 'lucide-react';
+import { Plus, Upload, Trash2, X, ChevronRight, Eye, Check } from 'lucide-react';
 import productApi from '../../api/productApi';
 import categoryApi from '../../api/categoryApi';
 import adminApi from '../../api/adminApi';
@@ -12,7 +12,6 @@ import { Product } from '../../types/product';
 import { Category } from '../../types/category';
 import toast from 'react-hot-toast';
 import { useImageCrop, validateImageFile } from '../../hooks/use-image-crop';
-import { Switch } from '../../components/ui/switch';
 
 const DEFAULT_FIELD_VISIBILITY = { brand: true, model: true, power: true, capacity: true, area: true };
 
@@ -90,12 +89,14 @@ export function ProductFormPage() {
       toast.success('Cập nhật sản phẩm thành công');
       navigate('/admin/products');
     },
-    onError: () => toast.error('Lỗi khi cập nhật sản phẩm'),
+    onError: (err: any) => toast.error(err?.response?.data?.message || 'Lỗi khi cập nhật sản phẩm'),
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const data = { ...form, price: Number(form.price) || 0 };
+    // Strip server-managed/immutable fields so Mongoose update doesn't reject on _id
+    const { _id, createdAt, updatedAt, __v, views, ...rest } = form as any;
+    const data = { ...rest, price: Number(form.price) || 0 };
     if (isEdit) updateMutation.mutate(data);
     else createMutation.mutate(data);
   };
@@ -348,23 +349,26 @@ export function ProductFormPage() {
                   fieldVisibility: { ...DEFAULT_FIELD_VISIBILITY, ...p.fieldVisibility, [key]: !(p.fieldVisibility?.[key] ?? true) },
                 }));
               return (
-                <div
+                <button
+                  type="button"
                   key={key}
-                  className={`flex items-center justify-between px-4 py-3 rounded-xl border cursor-pointer transition-colors ${
+                  onClick={toggle}
+                  className={`flex items-center justify-between px-4 py-3 rounded-xl border transition-colors text-left ${
                     isOn ? 'border-primary-200 bg-primary-50/60' : 'border-secondary-200 bg-secondary-50'
                   }`}
-                  onClick={toggle}
                 >
                   <span className={`text-sm font-medium ${isOn ? 'text-secondary-900' : 'text-secondary-400'}`}>
                     {label}
                   </span>
-                  <Switch
-                    checked={isOn}
-                    onCheckedChange={toggle}
-                    onClick={e => e.stopPropagation()}
-                    className="data-[state=checked]:bg-primary-600 data-[state=unchecked]:bg-secondary-200 h-5 w-9"
-                  />
-                </div>
+                  <span
+                    className={`flex items-center justify-center w-6 h-6 rounded-full ${
+                      isOn ? 'bg-primary-600 text-white' : 'bg-secondary-300 text-white'
+                    }`}
+                    aria-label={isOn ? 'Đang hiển thị' : 'Đang ẩn'}
+                  >
+                    {isOn ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                  </span>
+                </button>
               );
             })}
           </div>
