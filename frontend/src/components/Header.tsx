@@ -32,7 +32,13 @@ export function Header({ onNavigate }: HeaderProps) {
     e.preventDefault();
     setMobileMenuOpen(false);
     if (isHomePage) {
-      document.getElementById('quote')?.scrollIntoView({ behavior: 'smooth' });
+      // Scroll to #quote with exact offset for sticky header
+      const el = document.getElementById('quote');
+      const header = document.querySelector('header');
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - (header?.offsetHeight ?? 80);
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
     } else {
       navigate('/quote');
     }
