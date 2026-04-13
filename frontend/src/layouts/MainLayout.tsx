@@ -1,5 +1,12 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+
+// Scrolls to top on every route change
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 import { Header } from '../components/Header';
 import { Footer } from '../components/Footer';
 import { Product } from '../types/product';
@@ -62,6 +69,7 @@ export const MainLayout = () => {
 
   return (
     <>
+      <ScrollToTop />
       <Header onNavigate={handleNavigation} />
       <Outlet />
       <Footer onNavigate={handleNavigation} />

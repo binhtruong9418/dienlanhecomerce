@@ -1,6 +1,6 @@
 import { Menu, Phone, X } from 'lucide-react';
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useSettings } from '../hooks/useSettings';
 import { getSafeImageUrl } from '../utils/imageUtils';
 import { HeaderSearchBox } from './header-search-box';
@@ -12,6 +12,7 @@ interface HeaderProps {
 export function Header({ onNavigate }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { companyInfo } = useSettings();
+  const navigate = useNavigate();
   const location = useLocation();
   const isHomePage = location.pathname === '/';
 
@@ -31,7 +32,6 @@ export function Header({ onNavigate }: HeaderProps) {
     e.preventDefault();
     setMobileMenuOpen(false);
     if (isHomePage) {
-      // Đang ở trang home → scroll đến section #quote
       document.getElementById('quote')?.scrollIntoView({ behavior: 'smooth' });
     } else {
       navigate('/quote');
@@ -63,7 +63,7 @@ export function Header({ onNavigate }: HeaderProps) {
             <a href="#products" onClick={handleProductsClick} className="text-secondary-700 hover:text-primary-600 font-medium transition-colors">
               Sản phẩm
             </a>
-            <a href="/quote" onClick={handleQuoteClick} className="text-secondary-700 hover:text-primary-600 font-medium transition-colors">
+            <a href="" onClick={handleQuoteClick} className="text-secondary-700 hover:text-primary-600 font-medium transition-colors">
               Yêu cầu báo giá
             </a>
             <HeaderSearchBox className="w-64 xl:w-80" inputClassName="w-full" />
