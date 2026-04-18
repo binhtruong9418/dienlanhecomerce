@@ -46,11 +46,9 @@ export function SettingsAdmin() {
   }
 
   const info = companyInfo!;
-  const activeTab = TABS.find(t => t.value === activeValue)!;
-
   return (
     <main className="flex-1 p-4 md:p-8 overflow-auto bg-secondary-50 min-h-full">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-3xl mx-auto">
 
         {/* Page header */}
         <div className="mb-6">
@@ -60,31 +58,27 @@ export function SettingsAdmin() {
 
         <Tabs value={activeValue} onValueChange={setActiveValue} className="gap-0">
           {/* Tab bar */}
-          <TabsList className="w-full bg-white border border-secondary-200 border-b-0 rounded-t-2xl rounded-b-none h-auto p-0 justify-start overflow-x-auto">
+          <TabsList className="w-full overflow-x-auto bg-white border border-secondary-200 rounded-2xl p-1.5 h-auto justify-start">
             {TABS.map(({ value, label, icon: Icon }) => (
               <TabsTrigger
                 key={value}
                 value={value}
-                className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold rounded-none border-b-2 border-transparent text-secondary-500
-                  data-[state=active]:border-primary-600 data-[state=active]:text-primary-700 data-[state=active]:bg-primary-50/50
-                  hover:text-secondary-700 hover:bg-secondary-50 transition-all whitespace-nowrap shadow-none bg-transparent"
+                className={`group min-w-[150px] md:min-w-0 md:flex-1 h-10 rounded-xl border px-3 shadow-none transition-all ${
+                  activeValue === value
+                    ? 'bg-primary-100 text-primary-700 border-primary-300 shadow-sm'
+                    : 'bg-transparent text-secondary-600 border-transparent hover:bg-secondary-50 hover:text-secondary-800'
+                }`}
               >
-                <Icon className="w-4 h-4 flex-shrink-0" />
-                {label}
+                <div className="flex items-center justify-center gap-2">
+                  <Icon className={`w-4 h-4 shrink-0 ${activeValue === value ? 'text-primary-700' : 'text-secondary-500'}`} />
+                  <span className="text-sm font-semibold">{label}</span>
+                </div>
               </TabsTrigger>
             ))}
           </TabsList>
 
           {/* Content card */}
-          <div className="bg-white border border-secondary-200 rounded-b-2xl rounded-tr-2xl shadow-sm overflow-hidden">
-            {/* Tab subtitle strip */}
-            <div className="flex items-center gap-2.5 px-6 py-3.5 border-b border-secondary-100 bg-secondary-50/60">
-              <div className="w-6 h-6 rounded-md bg-primary-100 flex items-center justify-center flex-shrink-0">
-                <activeTab.icon className="w-3.5 h-3.5 text-primary-600" />
-              </div>
-              <p className="text-xs text-secondary-500">{activeTab.desc}</p>
-            </div>
-
+          <div className="mt-3 bg-white border border-secondary-200 rounded-2xl shadow-sm overflow-hidden">
             {/* Tab panels */}
             <div className="p-6">
               <TabsContent value="info" className="mt-0">

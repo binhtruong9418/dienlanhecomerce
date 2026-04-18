@@ -34,7 +34,7 @@ export function PolicyPage() {
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Chính sách</h1>
               {companyInfo?.companyName && (
-                <p className="text-white/65 text-sm mt-1">
+                <p className="inline-block text-secondary-900 bg-white/90 text-sm mt-2 px-3 py-1 rounded-md">
                   {companyInfo.companyName} — Điều khoản &amp; chính sách dịch vụ
                 </p>
               )}

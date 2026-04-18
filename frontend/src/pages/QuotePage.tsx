@@ -542,23 +542,9 @@ function PageHeader() {
         </nav>
 
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Yêu cầu báo giá</h1>
-        <p className="text-white/75 text-sm sm:text-base max-w-xl mb-5">
+        <p className="text-secondary-900 text-sm sm:text-base max-w-xl mb-5">
           Điền thông tin — đội ngũ kỹ thuật sẽ tư vấn và gửi báo giá chi tiết trong vòng 2 giờ.
         </p>
-
-        {/* Trust signal badges */}
-        <div className="flex flex-wrap gap-2">
-          {[
-            { icon: Zap,     label: 'Phản hồi trong 2 giờ' },
-            { icon: HeadphonesIcon, label: 'Tư vấn miễn phí' },
-            { icon: Lock,    label: 'Bảo mật thông tin' },
-          ].map(({ icon: Icon, label }) => (
-            <div key={label} className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-medium text-white">
-              <Icon className="w-3.5 h-3.5" />
-              {label}
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );

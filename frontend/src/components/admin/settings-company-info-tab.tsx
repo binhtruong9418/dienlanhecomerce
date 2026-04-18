@@ -1,10 +1,9 @@
 import { useState, useEffect, FormEvent } from 'react';
-import { Building2, Phone, Mail, MapPin, Clock, Share2 } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
-import { Separator } from '../ui/separator';
 import { CompanyInfo } from '../../api/settingApi';
 
 // Fallback values matching frontend display defaults
@@ -36,18 +35,6 @@ interface Props {
   isPending: boolean;
 }
 
-function SectionHeading({ icon: Icon, children }: { icon: React.ElementType; children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-2 mb-4">
-      <div className="w-6 h-6 rounded-md bg-secondary-100 flex items-center justify-center flex-shrink-0">
-        <Icon className="w-3.5 h-3.5 text-secondary-500" />
-      </div>
-      <span className="text-xs font-bold uppercase tracking-wider text-secondary-500">{children}</span>
-      <Separator className="flex-1 bg-secondary-100" />
-    </div>
-  );
-}
-
 export function SettingsCompanyInfoTab({ companyInfo, onSave, isPending }: Props) {
   const [form, setForm] = useState<FormState>(() => buildForm(companyInfo));
   useEffect(() => { setForm(buildForm(companyInfo)); }, [companyInfo]);
@@ -59,10 +46,7 @@ export function SettingsCompanyInfoTab({ companyInfo, onSave, isPending }: Props
 
   return (
     <form onSubmit={handleSubmit} className="space-y-7">
-
-      {/* ── Thông tin chung ── */}
       <section>
-        <SectionHeading icon={Building2}>Thông tin chung</SectionHeading>
         <div className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="companyName" className="text-sm font-medium text-secondary-700">
@@ -109,9 +93,7 @@ export function SettingsCompanyInfoTab({ companyInfo, onSave, isPending }: Props
         </div>
       </section>
 
-      {/* ── Liên hệ ── */}
-      <section>
-        <SectionHeading icon={Phone}>Liên hệ</SectionHeading>
+      <section className="border-t border-secondary-100 pt-6">
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label htmlFor="phone" className="text-sm font-medium text-secondary-700">
@@ -143,9 +125,7 @@ export function SettingsCompanyInfoTab({ companyInfo, onSave, isPending }: Props
         </div>
       </section>
 
-      {/* ── Mạng xã hội ── */}
-      <section>
-        <SectionHeading icon={Share2}>Mạng xã hội</SectionHeading>
+      <section className="border-t border-secondary-100 pt-6">
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label htmlFor="zaloLink" className="text-sm font-medium text-secondary-700">Link Zalo</Label>

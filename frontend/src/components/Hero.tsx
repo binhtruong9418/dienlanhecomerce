@@ -1,4 +1,6 @@
 import { ArrowRight } from 'lucide-react';
+import type { MouseEvent } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSettings } from '../hooks/useSettings';
 
 const HERO_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1766788467067-d443f19314b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwYWlyJTIwY29uZGl0aW9uZXIlMjBmYWN0b3J5fGVufDF8fHx8MTc2ODM2MDM5MXww&ixlib=rb-4.1.0&q=80&w=1080';
@@ -7,9 +9,28 @@ const HERO_FALLBACK_DESC = 'Cung cấp điều hòa cây và quạt điều hòa
 
 export function Hero() {
   const { companyInfo } = useSettings();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
   const imageUrl = companyInfo?.bannerImageUrl || HERO_FALLBACK_IMAGE;
   const title = companyInfo?.bannerText || HERO_FALLBACK_TITLE;
   const description = companyInfo?.bannerSubtext || HERO_FALLBACK_DESC;
+
+  const handleQuoteClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    if (isHomePage) {
+      // Keep the same offset behavior as header CTA.
+      const el = document.getElementById('quote');
+      const header = document.querySelector('header');
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - (header?.offsetHeight ?? 80);
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    } else {
+      navigate('/quote');
+    }
+  };
 
   return (
     <section className="relative min-h-screen w-full overflow-hidden">
@@ -48,7 +69,11 @@ export function Hero() {
               Xem sản phẩm
               <ArrowRight className="w-5 h-5" />
             </a>
-            <a href="#quote" className="bg-transparent border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-primary-700 transition-all flex items-center justify-center gap-2 shadow-lg" style={{ color: '#ffffff' }}>
+            <a
+              href={isHomePage ? '#quote' : '/quote'}
+              onClick={handleQuoteClick}
+              className="bg-transparent border-2 border-white px-8 py-4 rounded-lg font-semibold text-white hover:bg-white hover:text-primary-700 transition-all flex items-center justify-center gap-2 shadow-lg"
+            >
               Yêu cầu báo giá
             </a>
           </div>

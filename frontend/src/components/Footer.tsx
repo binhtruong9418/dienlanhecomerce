@@ -1,5 +1,6 @@
 import { Phone, Mail, MapPin, Facebook, Youtube, Zap } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import type { MouseEvent } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { handleImageError, getSafeImageUrl, FALLBACK_IMAGES } from '../utils/imageUtils';
 import { useSettings } from '../hooks/useSettings';
 import { QRCodeSVG } from 'qrcode.react';
@@ -10,8 +11,15 @@ interface FooterProps {
 
 export function Footer({ onNavigate }: FooterProps) {
   const { companyInfo } = useSettings();
+  const location = useLocation();
   
   const address = companyInfo?.address || '123 Đường ABC, Phường XYZ, Quận 1, TP.HCM';
+  const handleSamePagePolicyClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    if (location.pathname === '/chinh-sach') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <footer id="contact" className="bg-secondary-900 text-secondary-300">
@@ -58,27 +66,27 @@ export function Footer({ onNavigate }: FooterProps) {
             <h4 className="footer-title text-white font-semibold mb-4">Chính sách</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/chinh-sach" className="hover:text-primary-400 transition-colors">
+                <Link to="/chinh-sach" onClick={handleSamePagePolicyClick} className="hover:text-primary-400 transition-colors">
                   Chính sách bảo hành
                 </Link>
               </li>
               <li>
-                <Link to="/chinh-sach" className="hover:text-primary-400 transition-colors">
+                <Link to="/chinh-sach" onClick={handleSamePagePolicyClick} className="hover:text-primary-400 transition-colors">
                   Chính sách đổi trả
                 </Link>
               </li>
               <li>
-                <Link to="/chinh-sach" className="hover:text-primary-400 transition-colors">
+                <Link to="/chinh-sach" onClick={handleSamePagePolicyClick} className="hover:text-primary-400 transition-colors">
                   Chính sách vận chuyển
                 </Link>
               </li>
               <li>
-                <Link to="/chinh-sach" className="hover:text-primary-400 transition-colors">
+                <Link to="/chinh-sach" onClick={handleSamePagePolicyClick} className="hover:text-primary-400 transition-colors">
                   Điều khoản sử dụng
                 </Link>
               </li>
               <li>
-                <Link to="/chinh-sach" className="hover:text-primary-400 transition-colors">
+                <Link to="/chinh-sach" onClick={handleSamePagePolicyClick} className="hover:text-primary-400 transition-colors">
                   Bảo mật thông tin
                 </Link>
               </li>
