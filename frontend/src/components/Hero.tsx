@@ -48,10 +48,12 @@ export function Hero() {
       {/* Content Overlay */}
       <div className="relative container mx-auto px-4 py-20 md:py-32 min-h-screen flex items-center">
         <div className="max-w-3xl w-full">
-          {/* Badge pill */}
-          <div className="inline-block bg-white/25 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium mb-6 shadow-lg whitespace-nowrap" style={{ color: '#ffffff' }}>
-            🏭 Giải pháp làm mát công nghiệp
-          </div>
+          {/* Badge pill — only show when company name is available */}
+          {companyInfo?.companyName && (
+            <div className="inline-block bg-white/25 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium mb-6 shadow-lg whitespace-nowrap" style={{ color: '#ffffff' }}>
+              {companyInfo.companyName}
+            </div>
+          )}
 
           {/* Heading */}
           <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" style={{ color: '#ffffff' }}>

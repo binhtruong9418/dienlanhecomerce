@@ -150,7 +150,7 @@ export function QuotePage() {
     fd.append('customerName', formData.customerName || 'Khách hàng');
     fd.append('phone', formData.phone);
     fd.append('email', formData.email || 'khachhang@email.com');
-    fd.append('product', formData.product || 'Sản phẩm điện lạnh');
+    fd.append('product', formData.product || 'Sản phẩm');
     fd.append('quantity', formData.quantity || '1');
     fd.append('notes', formData.notes || 'Yêu cầu tư vấn từ website');
     fd.append('company', formData.company || 'Khách lẻ');

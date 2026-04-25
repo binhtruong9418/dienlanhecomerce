@@ -1,5 +1,5 @@
 // ProductListCard.tsx — Card sản phẩm dùng trong trang danh sách /products
-import { ArrowRight, CheckCircle } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Product } from '../types/product';
 import { handleImageError, getSafeImageUrl, FALLBACK_IMAGES } from '../utils/imageUtils';
 
@@ -25,21 +25,6 @@ export function ProductListCard({ product, onViewDetail, viewMode: _viewMode }: 
           className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
           onError={(e) => handleImageError(e, FALLBACK_IMAGES.product)}
         />
-
-        {/* Stock badge */}
-        <div className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${
-          product.inStock ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-        }`}>
-          {product.inStock && <CheckCircle className="w-3 h-3" />}
-          {product.inStock ? 'Còn hàng' : 'Hết hàng'}
-        </div>
-
-        {/* Category badge */}
-        {product.category?.name && (
-          <div className="absolute top-3 left-3 bg-primary-600/90 text-white px-2.5 py-1 rounded-full text-xs font-semibold">
-            {product.category.name}
-          </div>
-        )}
 
         {/* Discount badge */}
         {discountPct > 0 && (

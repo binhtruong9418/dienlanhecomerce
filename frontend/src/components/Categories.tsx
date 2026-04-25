@@ -1,16 +1,7 @@
 // components/Categories.tsx
-import { Wind, Fan, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCategories } from '../hooks/useCategories';
 import { handleImageError, getSafeImageUrl, FALLBACK_IMAGES } from '../utils/imageUtils';
-
-// Map icon dựa trên tên hoặc slug
-const getCategoryIcon = (categoryName: string) => {
-  const name = categoryName.toLowerCase();
-  if (name.includes('quạt') || name.includes('fan')) return Fan;
-  else if (name.includes('phụ kiện') || name.includes('part')) return Settings;
-  return Wind; // Mặc định
-};
 
 export function Categories() {
   const navigate = useNavigate();
@@ -54,14 +45,10 @@ export function Categories() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="mb-4">Danh mục sản phẩm</h2>
-          <p className="text-secondary-600 max-w-2xl mx-auto">
-            Cung cấp đầy đủ các giải pháp làm mát chuyên nghiệp cho mọi nhu cầu
-          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {activeCategories.map((category) => {
-            const Icon = getCategoryIcon(category.name);
             return (
               <div
                 key={category._id}
@@ -76,11 +63,6 @@ export function Categories() {
                     onError={(e) => handleImageError(e, FALLBACK_IMAGES.category)}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                  
-                  {/* Icon */}
-                  <div className="absolute top-4 right-4 bg-primary-600 w-14 h-14 rounded-xl flex items-center justify-center shadow-lg">
-                    <Icon className="w-7 h-7 text-white" />
-                  </div>
                 </div>
 
                 {/* Content */}

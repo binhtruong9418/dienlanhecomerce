@@ -57,7 +57,7 @@ export function QuoteSection() {
     formDataToSend.append('customerName', formData.customerName || 'Khách hàng');
     formDataToSend.append('phone', formData.phone);
     formDataToSend.append('email', formData.email || 'khachhang@email.com');
-    formDataToSend.append('product', formData.product || 'Sản phẩm điện lạnh');
+    formDataToSend.append('product', formData.product || 'Sản phẩm');
     formDataToSend.append('quantity', formData.quantity || '1');
     formDataToSend.append('notes', formData.notes || 'Yêu cầu tư vấn từ website');
     formDataToSend.append('company', formData.company || 'Khách lẻ');

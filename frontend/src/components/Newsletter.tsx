@@ -24,7 +24,7 @@ export function Newsletter() {
                 </div>
                 <h2 className="text-white mb-3">Nhận thông tin khuyến mãi</h2>
                 <p className="text-primary-100">
-                  Đăng ký để nhận thông tin về sản phẩm mới, chương trình khuyến mãi và tin tức công nghệ điện lạnh
+                  Đăng ký để nhận thông tin về sản phẩm mới, chương trình khuyến mãi và ưu đãi đặc biệt
                 </p>
               </div>
 
