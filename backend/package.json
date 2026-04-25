@@ -7,7 +7,8 @@
         "start": "node dist/app.js",
         "dev": "nodemon src/app.ts",
         "build": "tsc",
-        "seed": "ts-node src/seed.ts"
+        "seed": "ts-node src/seed.ts",
+        "seed:dongho": "ts-node src/seed-dongho.ts"
     },
     "dependencies": {
         "bcryptjs": "^2.4.3",
