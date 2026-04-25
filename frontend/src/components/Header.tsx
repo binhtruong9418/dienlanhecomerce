@@ -60,8 +60,8 @@ export function Header({ onNavigate }: HeaderProps) {
             </div>
             <div>
               <div className="font-bold text-xl text-primary-700">{companyInfo?.companyName || 'PK Quạt hơi nước'}</div>
-              {companyInfo?.bannerText && (
-                <div className="text-xs text-secondary-500 hidden sm:block line-clamp-1 max-w-[200px]">{companyInfo.bannerText}</div>
+              {companyInfo?.headerTagline && (
+                <div className="text-xs text-secondary-500 hidden sm:block line-clamp-1 max-w-[200px]">{companyInfo.headerTagline}</div>
               )}
             </div>
           </div>

@@ -15,17 +15,18 @@ const DEFAULTS = {
   workingHours: 'Thứ 2 - Thứ 7: 8:00 - 18:00 | Chủ nhật: 8:00 - 12:00',
 };
 
-type FormState = Pick<CompanyInfo, 'companyName' | 'phone' | 'email' | 'address' | 'workingHours' | 'zaloLink' | 'facebookLink'>;
+type FormState = Pick<CompanyInfo, 'companyName' | 'headerTagline' | 'phone' | 'email' | 'address' | 'workingHours' | 'zaloLink' | 'facebookLink'>;
 
 function buildForm(c: CompanyInfo): FormState {
   return {
-    companyName:  c.companyName  || DEFAULTS.companyName,
-    phone:        c.phone        || DEFAULTS.phone,
-    email:        c.email        || DEFAULTS.email,
-    address:      c.address      || DEFAULTS.address,
-    workingHours: c.workingHours || DEFAULTS.workingHours,
-    zaloLink:     c.zaloLink     || '',
-    facebookLink: c.facebookLink || '',
+    companyName:   c.companyName   || DEFAULTS.companyName,
+    headerTagline: c.headerTagline || '',
+    phone:         c.phone         || DEFAULTS.phone,
+    email:         c.email         || DEFAULTS.email,
+    address:       c.address       || DEFAULTS.address,
+    workingHours:  c.workingHours  || DEFAULTS.workingHours,
+    zaloLink:      c.zaloLink      || '',
+    facebookLink:  c.facebookLink  || '',
   };
 }
 
@@ -60,6 +61,20 @@ export function SettingsCompanyInfoTab({ companyInfo, onSave, isPending }: Props
               placeholder="VD: Công ty Điện Lạnh Pro"
               className="h-10 border-secondary-200 focus-visible:border-primary-500 focus-visible:ring-primary-500/20 text-sm"
             />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="headerTagline" className="text-sm font-medium text-secondary-700">
+              Mô tả ngắn (dưới tên công ty)
+            </Label>
+            <Input
+              id="headerTagline"
+              value={form.headerTagline}
+              onChange={set('headerTagline')}
+              placeholder="VD: Chuyên cung cấp đồng hồ chính hãng"
+              className="h-10 border-secondary-200 focus-visible:border-primary-500 focus-visible:ring-primary-500/20 text-sm"
+            />
+            <p className="text-xs text-secondary-400">Hiển thị nhỏ dưới tên công ty trên header (để trống để ẩn)</p>
           </div>
 
           <div className="space-y-1.5">

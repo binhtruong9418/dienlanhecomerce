@@ -11,6 +11,7 @@ export interface CompanyInfo {
   facebookLink: string;
   qrCodeUrl?: string;
   logoUrl?: string;
+  headerTagline?: string;
   faviconUrl?: string;
   siteTitle?: string;
   siteDescription?: string;
@@ -57,6 +58,7 @@ const settingApi = {
         bannerImageUrl: '',
         quoteBannerImageUrl: '',
         policyContent: '',
+        headerTagline: '',
       };
     }
   },
