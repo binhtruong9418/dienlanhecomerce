@@ -9,16 +9,18 @@ services:
       - ./backend/.env.production
     environment:
       - PORT=5000
+    networks:
+      - web
 
   frontend:
     build: ./frontend
     container_name: phukien_frontend
     restart: always
-    ports:
-      - "8080:80"
     depends_on:
       - backend
+    networks:
+      - web
 
 networks:
-  default:
-    name: phukien_network
+  web:
+    external: true
