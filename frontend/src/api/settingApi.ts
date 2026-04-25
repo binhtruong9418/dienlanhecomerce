@@ -11,6 +11,9 @@ export interface CompanyInfo {
   facebookLink: string;
   qrCodeUrl?: string;
   logoUrl?: string;
+  faviconUrl?: string;
+  siteTitle?: string;
+  siteDescription?: string;
   bannerText?: string;
   bannerSubtext?: string;
   bannerImageUrl?: string;
@@ -46,6 +49,9 @@ const settingApi = {
         facebookLink: '',
         qrCodeUrl: '',
         logoUrl: '',
+        faviconUrl: '',
+        siteTitle: '',
+        siteDescription: '',
         bannerText: '',
         bannerSubtext: '',
         bannerImageUrl: '',

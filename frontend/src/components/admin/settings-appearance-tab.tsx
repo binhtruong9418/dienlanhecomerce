@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, ChangeEvent, FormEvent, ElementType } from 'react';
-import { X, Layout, FileImage, ImageIcon, CloudUpload, Pencil } from 'lucide-react';
+import { X, Layout, FileImage, ImageIcon, CloudUpload, Pencil, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -116,25 +116,34 @@ function BannerUpload({ url, uploading, label, hint, onClear, onPick }: BannerUp
 // ─── Main component ───────────────────────────────────────────────────────────
 export function SettingsAppearanceTab({ companyInfo, onSave, isPending }: Props) {
   const [logoUrl,             setLogoUrl]            = useState(companyInfo.logoUrl            || '');
+  const [faviconUrl,          setFaviconUrl]          = useState(companyInfo.faviconUrl         || '');
+  const [siteTitle,           setSiteTitle]           = useState(companyInfo.siteTitle          || '');
+  const [siteDescription,     setSiteDescription]     = useState(companyInfo.siteDescription    || '');
   const [bannerImageUrl,      setBannerImageUrl]      = useState(companyInfo.bannerImageUrl     || '');
   const [bannerText,          setBannerText]          = useState(companyInfo.bannerText         || BANNER_TEXT_FALLBACK);
   const [bannerSubtext,       setBannerSubtext]       = useState(companyInfo.bannerSubtext      || BANNER_SUBTEXT_FALLBACK);
   const [quoteBannerImageUrl, setQuoteBannerImageUrl] = useState(companyInfo.quoteBannerImageUrl || '');
 
   const [uploadingLogo,        setUploadingLogo]        = useState(false);
+  const [uploadingFavicon,     setUploadingFavicon]     = useState(false);
   const [uploadingBanner,      setUploadingBanner]      = useState(false);
   const [uploadingQuoteBanner, setUploadingQuoteBanner] = useState(false);
 
   const logoRef        = useRef<HTMLInputElement>(null);
+  const faviconRef     = useRef<HTMLInputElement>(null);
   const bannerRef      = useRef<HTMLInputElement>(null);
   const quoteBannerRef = useRef<HTMLInputElement>(null);
 
   const { openCrop: openLogoCrop,        CropModalElement: LogoCropModal        } = useImageCrop();
+  const { openCrop: openFaviconCrop,     CropModalElement: FaviconCropModal     } = useImageCrop(1);
   const { openCrop: openBannerCrop,      CropModalElement: BannerCropModal      } = useImageCrop(16 / 9);
   const { openCrop: openQuoteBannerCrop, CropModalElement: QuoteBannerCropModal } = useImageCrop(16 / 9);
 
   useEffect(() => {
     setLogoUrl(companyInfo.logoUrl                         || '');
+    setFaviconUrl(companyInfo.faviconUrl                   || '');
+    setSiteTitle(companyInfo.siteTitle                     || '');
+    setSiteDescription(companyInfo.siteDescription         || '');
     setBannerImageUrl(companyInfo.bannerImageUrl           || '');
     setBannerText(companyInfo.bannerText                   || BANNER_TEXT_FALLBACK);
     setBannerSubtext(companyInfo.bannerSubtext             || BANNER_SUBTEXT_FALLBACK);
@@ -152,6 +161,10 @@ export function SettingsAppearanceTab({ companyInfo, onSave, isPending }: Props)
     const f = e.target.files?.[0]; if (!f) return;
     openLogoCrop(f, async (c) => { setUploadingLogo(true); const u = await upload(c); setUploadingLogo(false); if (u) setLogoUrl(u); });
   };
+  const onFaviconFile = (e: ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0]; if (!f) return;
+    openFaviconCrop(f, async (c) => { setUploadingFavicon(true); const u = await upload(c); setUploadingFavicon(false); if (u) setFaviconUrl(u); });
+  };
   const onBannerFile = (e: ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0]; if (!f) return;
     openBannerCrop(f, async (c) => { setUploadingBanner(true); const u = await upload(c); setUploadingBanner(false); if (u) setBannerImageUrl(u); });
@@ -163,7 +176,7 @@ export function SettingsAppearanceTab({ companyInfo, onSave, isPending }: Props)
 
   const handleSave = (e: FormEvent) => {
     e.preventDefault();
-    onSave({ logoUrl, bannerText, bannerSubtext, bannerImageUrl, quoteBannerImageUrl });
+    onSave({ logoUrl, faviconUrl, siteTitle, siteDescription, bannerText, bannerSubtext, bannerImageUrl, quoteBannerImageUrl });
   };
 
   return (
@@ -176,6 +189,33 @@ export function SettingsAppearanceTab({ companyInfo, onSave, isPending }: Props)
         <p className="text-xs text-secondary-400 mb-3">Xuất hiện trên header và footer của website</p>
         <input ref={logoRef} type="file" accept="image/*" className="hidden" onChange={onLogoFile} />
         <LogoUpload url={logoUrl} uploading={uploadingLogo} onClear={() => setLogoUrl('')} onPick={pick(logoRef)} />
+      </section>
+
+      {/* ── SEO & Favicon ── */}
+      <section>
+        <SectionHeading icon={Search}>SEO &amp; Favicon</SectionHeading>
+        <p className="text-xs text-secondary-400 mb-4">Tiêu đề và mô tả hiển thị trên tab trình duyệt và kết quả tìm kiếm Google</p>
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="siteTitle" className="text-sm font-medium text-secondary-700">Tiêu đề website (tab trình duyệt)</Label>
+            <Input id="siteTitle" value={siteTitle} onChange={e => setSiteTitle(e.target.value)}
+              className="h-10 border-secondary-200 focus-visible:border-primary-500 focus-visible:ring-primary-500/20 text-sm"
+              placeholder={companyInfo.companyName || 'Tên website'} />
+            <p className="text-xs text-secondary-400">Để trống sẽ dùng tên công ty</p>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="siteDescription" className="text-sm font-medium text-secondary-700">Mô tả website (meta description)</Label>
+            <Textarea id="siteDescription" value={siteDescription} onChange={e => setSiteDescription(e.target.value)} rows={2}
+              className="border-secondary-200 focus-visible:border-primary-500 focus-visible:ring-primary-500/20 text-sm min-h-0"
+              placeholder="Mô tả ngắn về website, hiển thị dưới tiêu đề trên Google (150–160 ký tự)" />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-sm font-medium text-secondary-700">Favicon (icon tab trình duyệt)</Label>
+            <input ref={faviconRef} type="file" accept="image/*" className="hidden" onChange={onFaviconFile} />
+            <LogoUpload url={faviconUrl} uploading={uploadingFavicon} onClear={() => setFaviconUrl('')} onPick={pick(faviconRef)} />
+            <p className="text-xs text-secondary-400">Ảnh vuông · khuyến nghị 32×32px hoặc 64×64px · PNG trong suốt</p>
+          </div>
+        </div>
       </section>
 
       {/* ── Banner Hero ── */}
@@ -215,12 +255,12 @@ export function SettingsAppearanceTab({ companyInfo, onSave, isPending }: Props)
           onClear={() => setQuoteBannerImageUrl('')} onPick={pick(quoteBannerRef)} />
       </section>
 
-      <Button type="submit" disabled={isPending || uploadingLogo || uploadingBanner || uploadingQuoteBanner}
+      <Button type="submit" disabled={isPending || uploadingLogo || uploadingFavicon || uploadingBanner || uploadingQuoteBanner}
         className="w-full h-10 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl text-sm">
         {isPending ? 'Đang lưu...' : 'Lưu giao diện'}
       </Button>
     </form>
-    {LogoCropModal}{BannerCropModal}{QuoteBannerCropModal}
+    {LogoCropModal}{FaviconCropModal}{BannerCropModal}{QuoteBannerCropModal}
     </>
   );
 }

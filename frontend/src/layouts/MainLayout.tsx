@@ -51,19 +51,26 @@ export const MainLayout = () => {
   const { companyInfo } = useSettings();
 
   useEffect(() => {
-    if (companyInfo) {
-      document.title = companyInfo.companyName || 'PK Quạt hơi nước';
-      
-      // Update meta description
-      let meta = document.querySelector('meta[name="description"]');
-      if (!meta) {
-        meta = document.createElement('meta');
-        meta.setAttribute('name', 'description');
-        document.head.appendChild(meta);
-      }
-      meta.setAttribute('content', companyInfo.companyName);
+    if (!companyInfo) return;
 
-      // We maintain the fallback favicon since we dont have it dynamic.
+    document.title = companyInfo.siteTitle || companyInfo.companyName || '';
+
+    let meta = document.querySelector('meta[name="description"]');
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.setAttribute('name', 'description');
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute('content', companyInfo.siteDescription || companyInfo.companyName || '');
+
+    if (companyInfo.faviconUrl) {
+      let link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+      }
+      link.href = companyInfo.faviconUrl;
     }
   }, [companyInfo]);
 
