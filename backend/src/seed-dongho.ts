@@ -1,7 +1,9 @@
 import dotenv from 'dotenv';
+import bcrypt from 'bcryptjs';
 import Category from './models/Category';
 import Product from './models/Product';
 import CompanyInfo from './models/CompanyInfo';
+import User from './models/User';
 import connectDB from './config/database';
 
 dotenv.config();
@@ -230,6 +232,21 @@ const seedDongho = async () => {
       policyContent: '',
     });
     console.log('Company info created');
+
+    // Admin user — create only if no admin exists yet
+    const existingAdmin = await User.findOne({ role: 'admin' });
+    if (!existingAdmin) {
+      const hashedPassword = await bcrypt.hash('Admin@123', 10);
+      await User.create({
+        name: 'Admin',
+        email: 'admin@binhminhsmartwatch.com',
+        password: hashedPassword,
+        role: 'admin',
+      });
+      console.log('Admin user created: admin@binhminhsmartwatch.com / Admin@123');
+    } else {
+      console.log('Admin user already exists — skipped');
+    }
 
     console.log('✓ Seed đồng hồ hoàn tất!');
     process.exit(0);
